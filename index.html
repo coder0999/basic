@@ -253,7 +253,7 @@
         // استيراد وظائف Firebase اللازمة
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getFirestore, collection, onSnapshot, doc, getDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        import { getAuth, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         
         // تكوين Firebase
         const firebaseConfig = {
@@ -560,48 +560,27 @@
             showResultsPage(currentExam, userAnswers);
         });
         
-        // --- المصادقة وتحميل البيانات ---
-        onAuthStateChanged(auth, async (user) => {
-            if (!user) {
-                showCustomAlert('الرجاء تسجيل الدخول لعرض الامتحانات.');
-            }
-        });
-
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                if (!unsubscribeFromExams) {
-                    renderSkeletonCards(); // Show skeleton loader
-                    const examsCollection = collection(db, `artifacts/${appId}/public/data/exams`);
-                    
-                    unsubscribeFromExams = onSnapshot(examsCollection, (snapshot) => {
-                        const exams = [];
-                        snapshot.forEach(doc => {
-                            exams.push({
-                                id: doc.id,
-                                data: doc.data()
-                            });
-                        });
-                        renderExamCards(exams);
-                    }, (error) => {
-                        console.error("خطأ في جلب الامتحانات:", error);
-                        showCustomAlert('فشل في جلب قائمة الامتحانات.');
-                        examsList.innerHTML = '<p class="text-center text-red-500 col-span-full">فشل تحميل الامتحانات.</p>';
+        // --- تحميل البيانات ---
+        // Login is not required, loading data directly.
+        if (!unsubscribeFromExams) {
+            renderSkeletonCards(); // Show skeleton loader
+            const examsCollection = collection(db, `artifacts/${appId}/public/data/exams`);
+            
+            unsubscribeFromExams = onSnapshot(examsCollection, (snapshot) => {
+                const exams = [];
+                snapshot.forEach(doc => {
+                    exams.push({
+                        id: doc.id,
+                        data: doc.data()
                     });
-                }
-            } else {
-                if (unsubscribeFromExams) {
-                    unsubscribeFromExams();
-                    unsubscribeFromExams = null;
-                }
-                if (unsubscribeFromSubjects) {
-                    unsubscribeFromSubjects();
-                    unsubscribeFromSubjects = null;
-                }
-                examsList.innerHTML = '';
-                const subjectsContainer = document.getElementById('subjects-container');
-                if (subjectsContainer) subjectsContainer.innerHTML = '';
-            }
-        });
+                });
+                renderExamCards(exams);
+            }, (error) => {
+                console.error("خطأ في جلب الامتحانات:", error);
+                showCustomAlert('فشل في جلب قائمة الامتحانات.');
+                examsList.innerHTML = '<p class="text-center text-red-500 col-span-full">فشل تحميل الامتحانات.</p>';
+            });
+        }
         
         // عرض صفحة الامتحانات بشكل افتراضي عند تحميل الصفحة
         showPage('exams-page');
