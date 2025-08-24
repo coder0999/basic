@@ -1,1 +1,609 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الموقع الاساسي</title>
+    <!-- تضمين Tailwind CSS و Font Awesome -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .nav-icon {
+            font-size: 1.5rem;
+        }
+        .custom-alert-overlay {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .custom-alert-box {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            width: 40px;
+            height: 40px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
 
+        /* Custom radio button */
+        .custom-radio .form-radio {
+            display: none;
+        }
+
+        .custom-radio label {
+            position: relative;
+            padding-right: 35px;
+            cursor: pointer;
+            display: block;
+            line-height: 25px;
+        }
+
+        .custom-radio label:before {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 22px;
+            height: 22px;
+            border: 2px solid #d1d5db;
+            border-radius: 50%;
+            background-color: #fff;
+            transition: border-color 0.2s ease-in-out;
+        }
+
+        .custom-radio input[type="radio"]:checked + label:before {
+            border-color: #2563eb;
+        }
+
+        .custom-radio label:after {
+            content: '';
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #2563eb;
+            transform: translateY(-50%) scale(0);
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .custom-radio input[type="radio"]:checked + label:after {
+            transform: translateY(-50%) scale(1);
+        }
+
+        /* Question Number Box */
+        .question-number-box {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background-color: #3b82f6; /* blue-500 */
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.125rem; /* text-lg */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 2px solid white;
+        }
+
+        /* Skeleton Loader */
+        .skeleton-card {
+            background-color: #e5e7eb; /* gray-200 */
+            border-radius: 0.5rem; /* rounded-lg */
+            padding: 1.5rem; /* p-6 */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        .skeleton-line {
+            height: 1rem;
+            background-color: #d1d5db; /* gray-300 */
+            border-radius: 0.25rem; /* rounded-md */
+        }
+
+        @keyframes pulse {
+            50% {
+                opacity: .5;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex flex-col min-h-screen">
+
+    <!-- المحتوى الرئيسي للتطبيق -->
+    <div class="flex-grow flex flex-col p-2 mb-20">
+
+        <!-- صفحة الامتحانات (عرض البطاقات) -->
+        <div id="exams-page" class="container mx-auto p-4 flex-grow">
+            <h1 class="text-4xl font-bold text-center text-gray-800 my-8">الامتحانات المتاحة</h1>
+            <div id="exams-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- سيتم عرض بطاقات الامتحانات هنا بواسطة JavaScript -->
+                <p id="no-exams-message" class="col-span-full text-center text-gray-500 hidden">لا توجد امتحانات متاحة حالياً.</p>
+            </div>
+        </div>
+
+        <!-- صفحة التقييمات -->
+        <div id="evaluations-page" class="hidden container mx-auto p-4 flex-grow">
+            <h1 class="text-3xl font-bold text-center text-blue-600 my-8">التقييمات الاسبوعية محلولة</h1>
+            <div id="subjects-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Subject cards will be loaded here -->
+            </div>
+        </div>
+        
+        <!-- صفحة الامتحان (لعرض الأسئلة) -->
+        <div id="exam-view" class="hidden py-4 flex-grow">
+            <h2 id="exam-title" class="text-3xl font-bold text-gray-800 text-center mb-6"></h2>
+            <div id="questions-container" class="space-y-8">
+                <!-- سيتم عرض أسئلة الامتحان هنا -->
+            </div>
+            <div class="flex justify-center mt-8">
+                <button id="submit-exam-btn" class="bg-green-600 text-white font-bold py-3 px-6 rounded-lg shadow-md transition-transform transform">
+                    تسليم
+                </button>
+            </div>
+        </div>
+
+        <!-- صفحة عرض النتائج (جديدة) -->
+        <div id="results-page" class="hidden py-4 flex-grow">
+            <h2 class="text-3xl font-bold text-gray-800 text-center mb-6">نتائج الامتحان</h2>
+            <div id="results-container" class="space-y-8">
+                <!-- سيتم عرض النتائج هنا بواسطة JavaScript -->
+            </div>
+            <div class="flex justify-center mt-8">
+                <button id="back-from-results-btn" class="bg-gray-400 text-white font-bold py-3 px-6 rounded-lg shadow-md transition-transform transform">
+                    العودة إلى الامتحانات
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- شريط التنقل السفلي -->
+    <nav id="bottom-nav" class="fixed bottom-0 left-0 w-full bg-white shadow-2xl z-10">
+        <div class="flex justify-around items-center h-16">
+            <button id="nav-exams-btn" class="flex flex-col items-center text-blue-600 focus:outline-none p-2">
+                <?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+<svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M3 9H21M9 15L11 17L15 13M7 3V5M17 3V5M6.2 21H17.8C18.9201 21 19.4802 21 19.908 20.782C20.2843 20.5903 20.5903 20.2843 20.782 19.908C21 19.4802 21 18.9201 21 17.8V8.2C21 7.07989 21 6.51984 20.782 6.09202C20.5903 5.71569 20.2843 5.40973 19.908 5.21799C19.4802 5 18.9201 5 17.8 5H6.2C5.0799 5 4.51984 5 4.09202 5.21799C3.71569 5.40973 3.40973 5.71569 3.21799 6.09202C3 6.51984 3 7.07989 3 8.2V17.8C3 18.9201 3 19.4802 3.21799 19.908C3.40973 20.2843 3.71569 20.5903 4.09202 20.782C4.51984 21 5.07989 21 6.2 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+                <span class="text-xs mt-1 font-bold">الامتحانات</span>
+            </button>
+            <button id="nav-evaluations-btn" class="flex flex-col items-center text-gray-500 focus:outline-none p-2">
+                <?xml version="1.0" encoding="iso-8859-1"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+<svg fill="currentColor" height="24px" width="24px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+	 viewBox="0 0 294.023 294.023" xml:space="preserve">
+<path color-rendering="auto" image-rendering="auto" shape-rendering="auto" color-interpolation="sRGB" d="M124.916,0.002
+	c-1.649,0.045-3.169,0.9-4.064,2.285l-14.49,21.736h-49.35c-2.761,0-5,2.239-5,5v50c0,2.761,2.239,5,5,5h50c2.761,0,5-2.239,5-5
+	V39.574l-10,15v19.449h-40v-40h37.682L85.631,55.117l-6.146-12.293c-1.205-2.485-4.196-3.523-6.681-2.318
+	c-2.485,1.205-3.523,4.196-2.318,6.681c0.018,0.036,0.035,0.072,0.054,0.108l10,20c1.235,2.47,4.238,3.472,6.709,2.237
+	c0.778-0.389,1.441-0.974,1.924-1.698l40-60c1.565-2.276,0.989-5.389-1.287-6.954C127.013,0.281,125.974-0.027,124.916,0.002
+	L124.916,0.002z M147.012,44.025c-2.761,0-5,2.239-5,5v10c0,2.761,2.239,5,5,5h90c2.761,0,5-2.239,5-5v-10c0-2.761-2.239-5-5-5
+	H147.012z M57.012,94.06c-2.761,0-5,2.239-5,5v50c0,2.761,2.239,5,5,5h50c2.761,0,5-2.239,5-5v-50c0-2.761-2.239-5-5-5H57.012z
+	 M62.012,104.06h40v40h-40V104.06z M147.012,114.023c-2.761,0-5,2.239-5,5v10c0,2.761,2.239,5,5,5h90c2.761,0,5-2.239,5-5v-10
+	c0-2.761-2.239-5-5-5H147.012z M57.012,164.023c-2.761,0-5,2.239-5,5v50c0,2.761,2.239,5,5,5h50c2.761,0,5-2.239,5-5v-50
+	c0-2.761-2.239-5-5-5H57.012z M62.012,174.023h40v40h-40V174.023z M147.012,184.058c-2.761,0-5,2.239-5,5v10c0,2.761,2.239,5,5,5h90
+	c2.761,0,5-2.239,5-5v-10c0-2.761-2.239-5-5-5H147.012z M57.012,234.023c-2.761,0-5,2.239-5,5v50c0,2.761,2.239,5,5,5h50
+	c2.761,0,5-2.239,5-5v-50c0-2.761-2.239-5-5-5L57.012,234.023L57.012,234.023z M62.012,244.023h40v40h-40V244.023z M147.012,254.023
+	c-2.761,0-5,2.239-5,5v10c0,2.761,2.239,5,5,5h90c2.761,0,5-2.239,5-5v-10c0-2.761-2.239-5-5-5H147.012z"/>
+</svg>
+                <span class="text-xs mt-1">التقييمات</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- مربع حواري مخصص لعرض رسائل النظام -->
+    <div id="custom-alert" class="custom-alert-overlay hidden">
+        <div class="custom-alert-box">
+            <p id="custom-alert-message" class="text-lg text-gray-700"></p>
+            <button id="custom-alert-ok" class="bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">موافق</button>
+        </div>
+    </div>
+
+    <!-- شاشة التحميل -->
+    <div id="loading-spinner" class="loading-overlay hidden">
+        <div class="spinner"></div>
+    </div>
+
+    <script type="module">
+        // استيراد وظائف Firebase اللازمة
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, collection, onSnapshot, doc, getDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        
+        // تكوين Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyC12345",
+            authDomain: "fir-cli-6a869.firebaseapp.com",
+            databaseURL: "https://fir-cli-6a869-default-rtdb.firebaseio.com",
+            projectId: "fir-cli-6a869",
+            storageBucket: "fir-cli-6a869.appspot.com",
+            messagingSenderId: "1019328734682",
+            appId: "1:1019328734682:web:e8c0efc11de7a52cda0931"
+        };
+        
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        
+        // المتغيرات العالمية للوصول إليها
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'tanya-thanawey';
+        let unsubscribeFromExams = null; // للاشتراك في التحديثات
+        let unsubscribeFromSubjects = null;
+        let currentExam = null; // لتخزين الامتحان الحالي
+        
+        // الحصول على عناصر DOM
+        const examsPage = document.getElementById('exams-page');
+        const evaluationsPage = document.getElementById('evaluations-page');
+        const examView = document.getElementById('exam-view');
+        const resultsPage = document.getElementById('results-page'); // العنصر الجديد لصفحة النتائج
+        
+        const examsList = document.getElementById('exams-list');
+        const noExamsMessage = document.getElementById('no-exams-message');
+        const questionsContainer = document.getElementById('questions-container');
+        const examTitle = document.getElementById('exam-title');
+        const submitExamBtn = document.getElementById('submit-exam-btn');
+
+        const resultsContainer = document.getElementById('results-container'); // حاوية النتائج
+        const backFromResultsBtn = document.getElementById('back-from-results-btn'); // زر العودة من النتائج
+
+        const navExamsBtn = document.getElementById('nav-exams-btn');
+        const navEvaluationsBtn = document.getElementById('nav-evaluations-btn');
+        const bottomNav = document.getElementById('bottom-nav');
+
+        const customAlertOverlay = document.getElementById('custom-alert');
+        const customAlertMessage = document.getElementById('custom-alert-message');
+        const customAlertOkBtn = document.getElementById('custom-alert-ok');
+        const loadingSpinner = document.getElementById('loading-spinner');
+
+        // دالة لعرض مربع حواري مخصص
+        function showCustomAlert(message) {
+            customAlertMessage.textContent = message;
+            customAlertOverlay.classList.remove('hidden');
+        }
+
+        // دالة لإغلاق مربع حواري مخصص
+        customAlertOkBtn.addEventListener('click', () => {
+            customAlertOverlay.classList.add('hidden');
+        });
+
+        function listenForSubjects() {
+            if (unsubscribeFromSubjects) {
+                return; // Listener already active
+            }
+
+            const subjectsContainer = document.getElementById('subjects-container');
+            if (!subjectsContainer) return;
+
+            const subjectsCollectionRef = collection(db, `artifacts/${appId}/public/data/subjects`);
+            
+            unsubscribeFromSubjects = onSnapshot(subjectsCollectionRef, (snapshot) => {
+                subjectsContainer.innerHTML = ''; // Clear previous content
+                if (snapshot.empty) {
+                    subjectsContainer.innerHTML = `<p class="text-center text-gray-600 col-span-full">لا توجد مواد متاحة.</p>`;
+                    return;
+                }
+
+                snapshot.forEach((doc) => {
+                    const subject = doc.data();
+                    const subjectCard = document.createElement('a');
+                    subjectCard.href = subject.link || '#';
+                    subjectCard.target = '_blank';
+                    subjectCard.rel = 'noopener noreferrer';
+                    subjectCard.className = 'bg-white rounded-xl shadow-md p-6 flex flex-col items-center justify-center space-y-4 cursor-pointer no-underline';
+                    
+                    subjectCard.innerHTML = `
+                        <h3 class="text-xl font-bold text-gray-800 text-center">${subject.name}</h3>
+                        <div class="bg-blue-500 text-white font-bold py-2 px-4 rounded-lg flex items-center space-x-2 space-x-reverse">
+                            <i class="fas fa-download"></i>
+                            <span>تنزيل</span>
+                        </div>
+                    `;
+                    subjectsContainer.appendChild(subjectCard);
+                });
+            }, (error) => {
+                console.error("Error listening for subjects:", error);
+                subjectsContainer.innerHTML = `<p class="text-center text-red-500 col-span-full">Error loading subjects.</p>`;
+            });
+        }
+
+        // دالة لتبديل عرض الصفحات
+        function showPage(pageId) {
+            window.scrollTo(0, 0);
+            // إخفاء جميع الصفحات أولاً
+            examsPage.classList.add('hidden');
+            evaluationsPage.classList.add('hidden');
+            examView.classList.add('hidden');
+            resultsPage.classList.add('hidden');
+            
+            // إظهار الصفحة المطلوبة
+            const activePage = document.getElementById(pageId);
+            if (activePage) activePage.classList.remove('hidden');
+
+            // إظهار أو إخفاء شريط التنقل
+            if (pageId === 'exam-view' || pageId === 'results-page') {
+                bottomNav.classList.add('hidden');
+            } else {
+                bottomNav.classList.remove('hidden');
+            }
+
+            // تحديث أزرار التنقل
+            navExamsBtn.classList.remove('text-blue-600', 'font-bold');
+            navExamsBtn.classList.add('text-gray-500');
+            navEvaluationsBtn.classList.remove('text-blue-600', 'font-bold');
+            navEvaluationsBtn.classList.add('text-gray-500');
+            
+            const activeButton = document.querySelector(`#nav-${pageId.replace('-page', '')}-btn`);
+            if (activeButton) {
+                activeButton.classList.remove('text-gray-500');
+                activeButton.classList.add('text-blue-600', 'font-bold');
+            }
+
+            if (pageId === 'evaluations-page') {
+                listenForSubjects();
+            }
+        }
+
+        // مستمعو أحداث التنقل
+        navExamsBtn.addEventListener('click', () => showPage('exams-page'));
+        navEvaluationsBtn.addEventListener('click', () => showPage('evaluations-page'));
+
+        function renderSkeletonCards() {
+            examsList.innerHTML = '';
+            noExamsMessage.classList.add('hidden');
+            for (let i = 0; i < 3; i++) {
+                const skeleton = document.createElement('div');
+                skeleton.className = 'skeleton-card';
+                skeleton.innerHTML = `
+                    <div class="space-y-3">
+                        <div class="skeleton-line w-3/4 mx-auto"></div>
+                        <div class="skeleton-line w-1/2 mx-auto"></div>
+                    </div>
+                `;
+                examsList.appendChild(skeleton);
+            }
+        }
+
+        // وظيفة لعرض بطاقات الامتحانات
+        function renderExamCards(exams) {
+            examsList.innerHTML = '';
+            if (exams.length === 0) {
+                noExamsMessage.classList.remove('hidden');
+            } else {
+                noExamsMessage.classList.add('hidden');
+                exams.forEach(exam => {
+                    const examCard = document.createElement('div');
+                    examCard.className = 'bg-white p-6 rounded-xl shadow-lg cursor-pointer flex flex-col justify-between';
+                    examCard.dataset.id = exam.id;
+                    const examName = exam.data.name || `امتحان ${exam.id}`;
+                    examCard.innerHTML = `
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 text-center">${examName}</h3>
+                        </div>
+                    `;
+                    examCard.addEventListener('click', () => startExam(exam));
+                    examsList.appendChild(examCard);
+                });
+            }
+        }
+
+        // وظيفة لعرض صفحة الامتحان
+        function startExam(exam) {
+            currentExam = exam; // حفظ الامتحان الحالي
+            showPage('exam-view');
+            examTitle.innerHTML = '&nbsp;'; // Clear title but keep space for layout
+            questionsContainer.className = 'space-y-8'; // Add more space for the number box
+            questionsContainer.innerHTML = '';
+
+            exam.data.questions.forEach((question, index) => {
+                const questionElement = document.createElement('div');
+                questionElement.className = 'p-6 bg-white rounded-lg shadow-md relative w-full';
+                questionElement.innerHTML = `
+                    <div class="question-number-box">
+                        <span>${index + 1}</span>
+                    </div>
+                    <p class="text-lg text-gray-800 mb-4 break-words pt-5">${question.text}</p>
+                    <div class="space-y-3">
+                        ${question.options.map((option, optIndex) => {
+                            const optionText = typeof option === 'string' ? option : option.text;
+                            const optionId = `option-${index}-${optIndex}`;
+                            return `<div class="custom-radio p-2 rounded-lg">
+                                <input type="radio" id="${optionId}" name="question-${index}" value="${optionText}" class="form-radio">
+                                <label for="${optionId}" class="text-gray-700 text-base">${optionText}</label>
+                            </div>`;
+                        }).join('')}
+                    </div>
+                `;
+                questionsContainer.appendChild(questionElement);
+            });
+        }
+        
+        // وظيفة جديدة لعرض صفحة النتائج
+        function showResultsPage(exam, userAnswers) {
+            showPage('results-page');
+            resultsContainer.className = 'space-y-8';
+            resultsContainer.innerHTML = '';
+            
+            let correctAnswersCount = 0;
+            const totalQuestions = exam.data.questions.length;
+
+            exam.data.questions.forEach((question, index) => {
+                const userAnswer = userAnswers[index];
+                
+                let correctAnswerIndex = question.correctAnswer; 
+                let userAnswerIndex = -1;
+
+                if (userAnswer) {
+                    userAnswerIndex = question.options.findIndex(opt => (typeof opt === 'string' ? opt : opt.text) === userAnswer);
+                }
+
+                if (typeof correctAnswerIndex === 'number' && correctAnswerIndex >= 0 && correctAnswerIndex < question.options.length) {
+                    if (userAnswerIndex === correctAnswerIndex) {
+                        correctAnswersCount++;
+                    }
+                } else {
+                    correctAnswerIndex = -1;
+                }
+                
+                const resultElement = document.createElement('div');
+                resultElement.className = 'p-6 bg-white rounded-lg shadow-md relative w-full';
+                
+                let optionsHtml = question.options.map((option, optIndex) => {
+                    const optionText = typeof option === 'string' ? option : option.text;
+                    let containerClass = 'flex justify-between items-center p-2 rounded-lg';
+                    let labelClass = 'text-gray-700 text-base';
+                    let icon = '';
+
+                    if (optIndex === correctAnswerIndex) {
+                        containerClass += ' bg-green-100';
+                        labelClass = 'text-green-800 text-base font-bold';
+                        icon = '<i class="fas fa-check-circle text-green-600 ml-2"></i>';
+                    }
+
+                    if (userAnswerIndex === optIndex && userAnswerIndex !== correctAnswerIndex) {
+                        containerClass += ' bg-red-100';
+                        labelClass = 'text-red-800 text-base font-bold';
+                        icon = '<i class="fas fa-times-circle text-red-600 ml-2"></i>';
+                    }
+                    
+                    const optionId = `result-option-${index}-${optIndex}`;
+                    return `<div class="${containerClass}">
+                                <div class="custom-radio">
+                                    <input type="radio" id="${optionId}" name="result-question-${index}" value="${optionText}" class="form-radio" ${userAnswerIndex === optIndex ? 'checked' : ''} disabled>
+                                    <label for="${optionId}" class="${labelClass}">${optionText}</label>
+                                </div>
+                                <span>${icon}</span>
+                            </div>`;
+                }).join('');
+                
+                resultElement.innerHTML = `
+                    <div class="question-number-box">
+                        <span>${index + 1}</span>
+                    </div>
+                    <p class="text-lg text-gray-800 mb-4 break-words pt-5">${question.text}</p>
+                    <div class="space-y-3">
+                        ${optionsHtml}
+                    </div>
+                `;
+                resultsContainer.appendChild(resultElement);
+            });
+
+            const percentage = totalQuestions > 0 ? Math.round((correctAnswersCount / totalQuestions) * 100) : 0;
+            const summaryElement = document.createElement('div');
+            summaryElement.className = 'p-6 bg-blue-100 text-blue-800 rounded-lg shadow-md text-center mb-8';
+            summaryElement.innerHTML = `
+                <p class="text-2xl font-bold">لقد أجبت على ${correctAnswersCount} من ${totalQuestions} بشكل صحيح</p>
+                <p class="text-4xl font-bold mt-2">${percentage}%</p>
+            `;
+            resultsContainer.prepend(summaryElement);
+        }
+        
+        // مستمع لزر "العودة"
+        backFromResultsBtn.addEventListener('click', () => showPage('exams-page'));
+
+        // مستمع لزر "إرسال الإجابات"
+        submitExamBtn.addEventListener('click', () => {
+            const userAnswers = [];
+            currentExam.data.questions.forEach((question, index) => {
+                const selectedOption = document.querySelector(`input[name="question-${index}"]:checked`);
+                if (selectedOption) {
+                    userAnswers.push(selectedOption.value);
+                } else {
+                    userAnswers.push(null);
+                }
+            });
+
+            showResultsPage(currentExam, userAnswers);
+        });
+        
+        // --- المصادقة وتحميل البيانات ---
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                showCustomAlert('الرجاء تسجيل الدخول لعرض الامتحانات.');
+            }
+        });
+
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                if (!unsubscribeFromExams) {
+                    renderSkeletonCards(); // Show skeleton loader
+                    const examsCollection = collection(db, `artifacts/${appId}/public/data/exams`);
+                    
+                    unsubscribeFromExams = onSnapshot(examsCollection, (snapshot) => {
+                        const exams = [];
+                        snapshot.forEach(doc => {
+                            exams.push({
+                                id: doc.id,
+                                data: doc.data()
+                            });
+                        });
+                        renderExamCards(exams);
+                    }, (error) => {
+                        console.error("خطأ في جلب الامتحانات:", error);
+                        showCustomAlert('فشل في جلب قائمة الامتحانات.');
+                        examsList.innerHTML = '<p class="text-center text-red-500 col-span-full">فشل تحميل الامتحانات.</p>';
+                    });
+                }
+            } else {
+                if (unsubscribeFromExams) {
+                    unsubscribeFromExams();
+                    unsubscribeFromExams = null;
+                }
+                if (unsubscribeFromSubjects) {
+                    unsubscribeFromSubjects();
+                    unsubscribeFromSubjects = null;
+                }
+                examsList.innerHTML = '';
+                const subjectsContainer = document.getElementById('subjects-container');
+                if (subjectsContainer) subjectsContainer.innerHTML = '';
+            }
+        });
+        
+        // عرض صفحة الامتحانات بشكل افتراضي عند تحميل الصفحة
+        showPage('exams-page');
+
+    </script>
+</body>
+</html>
