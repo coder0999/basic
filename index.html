@@ -150,89 +150,91 @@
         }
     </style>
 </head>
-<body class="bg-gray-100 flex flex-col min-h-screen">
+<body class="bg-gray-100">
 
-    <!-- المحتوى الرئيسي للتطبيق -->
-    <div class="flex-grow flex flex-col p-2 mb-20">
+    <div class="md:flex md:flex-row-reverse min-h-screen">
 
-        <!-- صفحة الامتحانات (عرض البطاقات) -->
-        <div id="exams-page" class="container mx-auto p-4 flex-grow">
-            <h1 class="text-4xl font-bold text-center text-gray-800 my-8">الامتحانات المتاحة</h1>
-            <div id="exams-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- سيتم عرض بطاقات الامتحانات هنا بواسطة JavaScript -->
-                <p id="no-exams-message" class="col-span-full text-center text-gray-500 hidden">لا توجد امتحانات متاحة حالياً.</p>
+        <!-- Main Content Area -->
+        <main class="flex-grow p-2 md:mb-0 mb-20">
+            <!-- The rest of your page content (exam cards, etc.) will stay here -->
+            <!-- صفحة الامتحانات (عرض البطاقات) -->
+            <div id="exams-page" class="container mx-auto p-4 flex-grow">
+                <h1 class="text-4xl font-bold text-center text-gray-800 my-8">الامتحانات المتاحة</h1>
+                <div id="exams-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- سيتم عرض بطاقات الامتحانات هنا بواسطة JavaScript -->
+                    <p id="no-exams-message" class="col-span-full text-center text-gray-500 hidden">لا توجد امتحانات متاحة حالياً.</p>
+                </div>
             </div>
-        </div>
 
-        <!-- صفحة التقييمات -->
-        <div id="evaluations-page" class="hidden container mx-auto p-4 flex-grow">
-            <h1 class="text-3xl font-bold text-center text-blue-600 my-8">التقييمات الاسبوعية محلولة</h1>
-            <div id="subjects-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Subject cards will be loaded here -->
+            <!-- صفحة التقييمات -->
+            <div id="evaluations-page" class="hidden container mx-auto p-4 flex-grow">
+                <h1 class="text-3xl font-bold text-center text-blue-600 my-8">التقييمات الاسبوعية محلولة</h1>
+                <div id="subjects-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Subject cards will be loaded here -->
+                </div>
             </div>
-        </div>
-        
-        <!-- صفحة الامتحان (لعرض الأسئلة) -->
-        <div id="exam-view" class="hidden py-4 flex-grow">
-            <h2 id="exam-title" class="text-3xl font-bold text-gray-800 text-center mb-6"></h2>
-            <div id="questions-container" class="space-y-8">
-                <!-- سيتم عرض أسئلة الامتحان هنا -->
+            
+            <!-- صفحة الامتحان (لعرض الأسئلة) -->
+            <div id="exam-view" class="hidden py-4 flex-grow">
+                <h2 id="exam-title" class="text-3xl font-bold text-gray-800 text-center mb-6"></h2>
+                <div id="questions-container" class="space-y-8">
+                    <!-- سيتم عرض أسئلة الامتحان هنا -->
+                </div>
+                <div class="flex justify-center mt-8">
+                    <button id="submit-exam-btn" class="bg-green-600 text-white font-bold py-3 px-6 rounded-lg shadow-md transition-transform transform">
+                        تسليم
+                    </button>
+                </div>
             </div>
-            <div class="flex justify-center mt-8">
-                <button id="submit-exam-btn" class="bg-green-600 text-white font-bold py-3 px-6 rounded-lg shadow-md transition-transform transform">
-                    تسليم
+
+            <!-- صفحة عرض النتائج (جديدة) -->
+            <div id="results-page" class="hidden py-4 flex-grow">
+                <h2 class="text-3xl font-bold text-gray-800 text-center mb-6">نتائج الامتحان</h2>
+                <div id="results-container" class="space-y-8">
+                    <!-- سيتم عرض النتائج هنا بواسطة JavaScript -->
+                </div>
+                <div class="flex justify-center mt-8">
+                    <button id="back-from-results-btn" class="bg-gray-400 text-white font-bold py-3 px-6 rounded-lg shadow-md transition-transform transform">
+                        العودة إلى الامتحانات
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Navigation Bar -->
+        <nav id="bottom-nav" class="fixed bottom-0 left-0 w-full bg-white shadow-2xl z-10 md:relative md:w-64 md:shadow-lg md:flex-shrink-0 md:flex md:flex-col md:justify-start md:p-4">
+            <div class="flex justify-around items-center h-16 md:h-auto md:flex-col md:items-stretch md:space-y-6">
+                <button id="nav-exams-btn" class="flex flex-col items-center text-blue-600 focus:outline-none p-2 md:flex-row md:justify-start md:items-center md:space-x-3 md:p-3 md:rounded-lg md:hover:bg-gray-100">
+                    <?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+                    <svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M3 9H21M9 15L11 17L15 13M7 3V5M17 3V5M6.2 21H17.8C18.9201 21 19.4802 21 19.908 20.782C20.2843 20.5903 20.5903 20.2843 20.782 19.908C21 19.4802 21 18.9201 21 17.8V8.2C21 7.07989 21 6.51984 20.782 6.09202C20.5903 5.71569 20.2843 5.40973 19.908 5.21799C19.4802 5 18.9201 5 17.8 5H6.2C5.0799 5 4.51984 5 4.09202 5.21799C3.71569 5.40973 3.40973 5.71569 3.21799 6.09202C3 6.51984 3 7.07989 3 8.2V17.8C3 18.9201 3 19.4802 3.21799 19.908C3.40973 20.2843 3.71569 20.5903 4.09202 20.782C4.51984 21 5.07989 21 6.2 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span class="text-xs mt-1 md:mt-0 md:text-base">الامتحانات</span>
+                </button>
+                <button id="nav-evaluations-btn" class="flex flex-col items-center text-gray-500 focus:outline-none p-2 md:flex-row md:justify-start md:items-center md:space-x-3 md:p-3 md:rounded-lg md:hover:bg-gray-100">
+                    <?xml version="1.0" encoding="iso-8859-1"?>
+                    <!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+                    <svg fill="currentColor" height="24px" width="24px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+                         viewBox="0 0 294.023 294.023" xml:space="preserve">
+                        <path color-rendering="auto" image-rendering="auto" shape-rendering="auto" color-interpolation="sRGB" d="M124.916,0.002
+                        c-1.649,0.045-3.169,0.9-4.064,2.285l-14.49,21.736h-49.35c-2.761,0-5,2.239-5,5v50c0,2.761,2.239,5,5,5h50c2.761,0,5-2.239,5-5
+                        V39.574l-10,15v19.449h-40v-40h37.682L85.631,55.117l-6.146-12.293c-1.205-2.485-4.196-3.523-6.681-2.318
+                        c-2.485,1.205-3.523,4.196-2.318,6.681c0.018,0.036,0.035,0.072,0.054,0.108l10,20c1.235,2.47,4.238,3.472,6.709,2.237
+                        c0.778-0.389,1.441-0.974,1.924-1.698l40-60c1.565-2.276,0.989-5.389-1.287-6.954C127.013,0.281,125.974-0.027,124.916,0.002
+                        L124.916,0.002z M147.012,44.025c-2.761,0-5,2.239-5,5v10c0,2.761,2.239,5,5,5h90c2.761,0,5-2.239,5-5v-10c0-2.761-2.239-5-5-5
+                        H147.012z M57.012,94.06c-2.761,0-5,2.239-5,5v50c0,2.761,2.239,5,5,5h50c2.761,0,5-2.239,5-5v-50c0-2.761-2.239-5-5-5H57.012z
+                         M62.012,104.06h40v40h-40V104.06z M147.012,114.023c-2.761,0-5,2.239-5,5v10c0,2.761,2.239,5,5,5h90c2.761,0,5-2.239,5-5v-10
+                        c0-2.761-2.239-5-5-5H147.012z M57.012,164.023c-2.761,0-5,2.239-5,5v50c0,2.761,2.239,5,5,5h50c2.761,0,5-2.239,5-5v-50
+                        c0-2.761-2.239-5-5-5H57.012z M62.012,174.023h40v40h-40V174.023z M147.012,184.058c-2.761,0-5,2.239-5,5v10c0,2.761,2.239,5,5,5h90
+                        c2.761,0,5-2.239,5-5v-10c0-2.761-2.239-5-5-5H147.012z M57.012,234.023c-2.761,0-5,2.239-5,5v50c0,2.761,2.239,5,5,5h50
+                        c2.761,0,5-2.239,5-5v-50c0-2.761-2.239-5-5-5L57.012,234.023L57.012,234.023z M62.012,244.023h40v40h-40V244.023z M147.012,254.023
+                        c-2.761,0-5,2.239-5,5v10c0,2.761,2.239,5,5,5h90c2.761,0,5-2.239,5-5v-10c0-2.761-2.239-5-5-5H147.012z"/>
+                    </svg>
+                    <span class="text-xs mt-1 md:mt-0 md:text-base">التقييمات</span>
                 </button>
             </div>
-        </div>
-
-        <!-- صفحة عرض النتائج (جديدة) -->
-        <div id="results-page" class="hidden py-4 flex-grow">
-            <h2 class="text-3xl font-bold text-gray-800 text-center mb-6">نتائج الامتحان</h2>
-            <div id="results-container" class="space-y-8">
-                <!-- سيتم عرض النتائج هنا بواسطة JavaScript -->
-            </div>
-            <div class="flex justify-center mt-8">
-                <button id="back-from-results-btn" class="bg-gray-400 text-white font-bold py-3 px-6 rounded-lg shadow-md transition-transform transform">
-                    العودة إلى الامتحانات
-                </button>
-            </div>
-        </div>
-
+        </nav>
     </div>
-
-    <!-- شريط التنقل السفلي -->
-    <nav id="bottom-nav" class="fixed bottom-0 left-0 w-full bg-white shadow-2xl z-10">
-        <div class="flex justify-around items-center h-16">
-            <button id="nav-exams-btn" class="flex flex-col items-center text-blue-600 focus:outline-none p-2">
-                <?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
-<svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M3 9H21M9 15L11 17L15 13M7 3V5M17 3V5M6.2 21H17.8C18.9201 21 19.4802 21 19.908 20.782C20.2843 20.5903 20.5903 20.2843 20.782 19.908C21 19.4802 21 18.9201 21 17.8V8.2C21 7.07989 21 6.51984 20.782 6.09202C20.5903 5.71569 20.2843 5.40973 19.908 5.21799C19.4802 5 18.9201 5 17.8 5H6.2C5.0799 5 4.51984 5 4.09202 5.21799C3.71569 5.40973 3.40973 5.71569 3.21799 6.09202C3 6.51984 3 7.07989 3 8.2V17.8C3 18.9201 3 19.4802 3.21799 19.908C3.40973 20.2843 3.71569 20.5903 4.09202 20.782C4.51984 21 5.07989 21 6.2 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
-                <span class="text-xs mt-1 font-bold">الامتحانات</span>
-            </button>
-            <button id="nav-evaluations-btn" class="flex flex-col items-center text-gray-500 focus:outline-none p-2">
-                <?xml version="1.0" encoding="iso-8859-1"?>
-<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
-<svg fill="currentColor" height="24px" width="24px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
-	 viewBox="0 0 294.023 294.023" xml:space="preserve">
-<path color-rendering="auto" image-rendering="auto" shape-rendering="auto" color-interpolation="sRGB" d="M124.916,0.002
-	c-1.649,0.045-3.169,0.9-4.064,2.285l-14.49,21.736h-49.35c-2.761,0-5,2.239-5,5v50c0,2.761,2.239,5,5,5h50c2.761,0,5-2.239,5-5
-	V39.574l-10,15v19.449h-40v-40h37.682L85.631,55.117l-6.146-12.293c-1.205-2.485-4.196-3.523-6.681-2.318
-	c-2.485,1.205-3.523,4.196-2.318,6.681c0.018,0.036,0.035,0.072,0.054,0.108l10,20c1.235,2.47,4.238,3.472,6.709,2.237
-	c0.778-0.389,1.441-0.974,1.924-1.698l40-60c1.565-2.276,0.989-5.389-1.287-6.954C127.013,0.281,125.974-0.027,124.916,0.002
-	L124.916,0.002z M147.012,44.025c-2.761,0-5,2.239-5,5v10c0,2.761,2.239,5,5,5h90c2.761,0,5-2.239,5-5v-10c0-2.761-2.239-5-5-5
-	H147.012z M57.012,94.06c-2.761,0-5,2.239-5,5v50c0,2.761,2.239,5,5,5h50c2.761,0,5-2.239,5-5v-50c0-2.761-2.239-5-5-5H57.012z
-	 M62.012,104.06h40v40h-40V104.06z M147.012,114.023c-2.761,0-5,2.239-5,5v10c0,2.761,2.239,5,5,5h90c2.761,0,5-2.239,5-5v-10
-	c0-2.761-2.239-5-5-5H147.012z M57.012,164.023c-2.761,0-5,2.239-5,5v50c0,2.761,2.239,5,5,5h50c2.761,0,5-2.239,5-5v-50
-	c0-2.761-2.239-5-5-5H57.012z M62.012,174.023h40v40h-40V174.023z M147.012,184.058c-2.761,0-5,2.239-5,5v10c0,2.761,2.239,5,5,5h90
-	c2.761,0,5-2.239,5-5v-10c0-2.761-2.239-5-5-5H147.012z M57.012,234.023c-2.761,0-5,2.239-5,5v50c0,2.761,2.239,5,5,5h50
-	c2.761,0,5-2.239,5-5v-50c0-2.761-2.239-5-5-5L57.012,234.023L57.012,234.023z M62.012,244.023h40v40h-40V244.023z M147.012,254.023
-	c-2.761,0-5,2.239-5,5v10c0,2.761,2.239,5,5,5h90c2.761,0,5-2.239,5-5v-10c0-2.761-2.239-5-5-5H147.012z"/>
-</svg>
-                <span class="text-xs mt-1">التقييمات</span>
-            </button>
-        </div>
-    </nav>
 
     <!-- مربع حواري مخصص لعرض رسائل النظام -->
     <div id="custom-alert" class="custom-alert-overlay hidden">
