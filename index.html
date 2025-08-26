@@ -192,8 +192,8 @@
 
             <!-- Store Page -->
             <div id="store-page" class="hidden container mx-auto p-4 flex-grow">
-                <div class="fixed top-24 right-4 bg-blue-500 text-white p-4 rounded-full shadow-lg flex items-center">
-                    <span class="text-2xl font-bold" id="user-points">0</span>
+                <div class="fixed top-4 right-4 bg-blue-500 text-white p-6 rounded-full shadow-lg flex items-center">
+                    <span class="text-4xl font-bold" id="user-points">0</span>
                     <span class="mr-2">نقاط</span>
                 </div>
                 <div id="store-content" class="mt-40 text-center">
@@ -620,17 +620,11 @@
         async function addPoints(userId, amount) {
             const userRef = doc(db, "users", userId);
             try {
-                await updateDoc(userRef, {
-                    points: increment(amount)
-                });
-                displayUserPoints(userId); // Refresh points display
+                await setDoc(userRef, { points: increment(amount) }, { merge: true });
+                await displayUserPoints(userId);
             } catch (e) {
-                if (e.code === 'not-found') {
-                     await setDoc(userRef, { points: amount });
-                     displayUserPoints(userId);
-                } else {
-                    console.error("Error adding points: ", e);
-                }
+                console.error("Error adding points: ", e);
+                showCustomAlert("حدث خطأ عند إضافة النقاط. قد يكون السبب هو قواعد الأمان في فايربيس. يرجى مراجعتها.");
             }
         }
 
