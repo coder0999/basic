@@ -462,13 +462,13 @@
 
             exam.data.questions.forEach((question, index) => {
                 const questionElement = document.createElement('div');
-                questionElement.className = 'p-6 md:h-[80vh] bg-white rounded-lg shadow-md relative w-full md:flex md:flex-col';
+                questionElement.className = 'p-6 bg-white rounded-lg shadow-md relative w-full md:h-[80vh]';
                 questionElement.innerHTML = `
                     <div class="question-number-box">
                         <span>${index + 1}</span>
                     </div>
-                    <p class="text-lg md:text-3xl text-gray-800 mb-4 break-words pt-5 flex-shrink-0">${question.text}</p>
-                    <div class="space-y-3 md:space-y-0 md:flex-grow md:flex md:flex-col md:justify-evenly">
+                    <p class="text-lg md:text-3xl text-gray-800 mb-4 break-words pt-5">${question.text}</p>
+                    <div class="space-y-3 md:space-y-8">
                         ${question.options.map((option, optIndex) => {
                             const optionText = typeof option === 'string' ? option : option.text;
                             const optionId = `option-${index}-${optIndex}`;
