@@ -368,11 +368,15 @@
             const activePage = document.getElementById(pageId);
             if (activePage) activePage.classList.remove('hidden');
 
-            // إظهار أو إخفاء شريط التنقل
+            const mainContent = document.querySelector('main');
+
+            // إظهار أو إخفاء شريط التنقل وتعديل التخطيط
             if (pageId === 'exam-view' || pageId === 'results-page') {
                 bottomNav.classList.add('hidden');
+                mainContent.classList.remove('md:mr-48');
             } else {
                 bottomNav.classList.remove('hidden');
+                mainContent.classList.add('md:mr-48');
             }
 
             // تحديث أزرار التنقل
@@ -440,7 +444,7 @@
             currentExam = exam; // حفظ الامتحان الحالي
             showPage('exam-view');
             examTitle.innerHTML = '&nbsp;'; // Clear title but keep space for layout
-            questionsContainer.className = 'space-y-8'; // Add more space for the number box
+            questionsContainer.className = 'space-y-8 max-w-7xl mx-auto'; // Add more space for the number box
             questionsContainer.innerHTML = '';
 
             exam.data.questions.forEach((question, index) => {
