@@ -462,19 +462,19 @@
 
             exam.data.questions.forEach((question, index) => {
                 const questionElement = document.createElement('div');
-                questionElement.className = 'p-6 md:h-[80vh] bg-white rounded-lg shadow-md relative w-full';
+                questionElement.className = 'p-6 md:h-[80vh] bg-white rounded-lg shadow-md relative w-full md:flex md:flex-col';
                 questionElement.innerHTML = `
                     <div class="question-number-box">
                         <span>${index + 1}</span>
                     </div>
-                    <p class="text-lg md:text-xl text-gray-800 mb-4 break-words pt-5">${question.text}</p>
-                    <div class="space-y-3">
+                    <p class="text-lg md:text-3xl text-gray-800 mb-4 break-words pt-5 flex-shrink-0">${question.text}</p>
+                    <div class="space-y-3 md:space-y-0 md:flex-grow md:flex md:flex-col md:justify-evenly">
                         ${question.options.map((option, optIndex) => {
                             const optionText = typeof option === 'string' ? option : option.text;
                             const optionId = `option-${index}-${optIndex}`;
                             return `<div class="custom-radio p-2 rounded-lg">
                                 <input type="radio" id="${optionId}" name="question-${index}" value="${optionText}" class="form-radio">
-                                <label for="${optionId}" class="text-gray-700 text-base md:text-lg">${optionText}</label>
+                                <label for="${optionId}" class="text-gray-700 text-base md:text-2xl">${optionText}</label>
                             </div>`;
                         }).join('')}
                     </div>
