@@ -189,6 +189,25 @@
                     <!-- Subject cards will be loaded here -->
                 </div>
             </div>
+
+            <!-- Store Page -->
+            <div id="store-page" class="hidden container mx-auto p-4 flex-grow">
+                <h1 class="text-4xl md:text-5xl font-bold text-center text-gray-800 my-8">المتجر</h1>
+                <p class="text-center text-gray-500">قريبا...</p>
+            </div>
+
+            <!-- Profile Page -->
+            <div id="profile-page" class="hidden container mx-auto p-4 flex-grow text-center">
+                <h1 class="text-4xl md:text-5xl font-bold text-center text-gray-800 my-8">الملف الشخصي</h1>
+                <div id="user-info" class="hidden bg-white p-6 rounded-lg shadow-md">
+                    <p class="text-lg md:text-xl"><strong>الاسم:</strong> <span id="user-name"></span></p>
+                    <p class="text-lg md:text-xl mt-2"><strong>الرمز التعريفي:</strong> <span id="user-uid"></span></p>
+                    <button id="sign-out-btn" class="mt-6 bg-red-600 text-white font-bold py-2 px-4 rounded-lg">تسجيل الخروج</button>
+                </div>
+                <button id="sign-in-btn" class="mt-6 bg-blue-600 text-white font-bold py-3 px-6 rounded-lg shadow-md">
+                    <i class="fab fa-google mr-2"></i> تسجيل الدخول باستخدام جوجل
+                </button>
+            </div>
             
             <!-- صفحة الامتحان (لعرض الأسئلة) -->
             <div id="exam-view" class="hidden py-4 flex-grow">
@@ -221,32 +240,20 @@
         <nav id="bottom-nav" class="fixed bottom-0 left-0 w-full bg-white shadow-2xl z-10 md:top-0 md:right-0 md:h-screen md:w-48 md:shadow-lg md:flex-shrink-0 md:flex md:flex-col md:justify-start md:p-4">
             <div class="flex justify-around items-center h-16 md:h-auto md:flex-col md:items-stretch md:space-y-6">
                 <button id="nav-exams-btn" class="flex flex-col items-center text-blue-600 focus:outline-none p-2 md:flex-row md:justify-start md:items-center md:space-x-3 md:p-3 md:rounded-lg md:hover:bg-gray-100">
-                    <?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
-                    <svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="nav-icon-svg">
-                        <path d="M3 9H21M9 15L11 17L15 13M7 3V5M17 3V5M6.2 21H17.8C18.9201 21 19.4802 21 19.908 20.782C20.2843 20.5903 20.5903 20.2843 20.782 19.908C21 19.4802 21 18.9201 21 17.8V8.2C21 7.07989 21 6.51984 20.782 6.09202C20.5903 5.71569 20.2843 5.40973 19.908 5.21799C19.4802 5 18.9201 5 17.8 5H6.2C5.0799 5 4.51984 5 4.09202 5.21799C3.71569 5.40973 3.40973 5.71569 3.21799 6.09202C3 6.51984 3 7.07989 3 8.2V17.8C3 18.9201 3 19.4802 3.21799 19.908C3.40973 20.2843 3.71569 20.5903 4.09202 20.782C4.51984 21 5.07989 21 6.2 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
+                    <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 9H21M9 15L11 17L15 13M7 3V5M17 3V5M6.2 21H17.8C18.9201 21 19.4802 21 19.908 20.782C20.2843 20.5903 20.5903 20.2843 20.782 19.908C21 19.4802 21 18.9201 21 17.8V8.2C21 7.07989 21 6.51984 20.782 6.09202C20.5903 5.71569 20.2843 5.40973 19.908 5.21799C19.4802 5 18.9201 5 17.8 5H6.2C5.0799 5 4.51984 5 4.09202 5.21799C3.71569 5.40973 3.40973 5.71569 3.21799 6.09202C3 6.51984 3 7.07989 3 8.2V17.8C3 18.9201 3 19.4802 3.21799 19.908C3.40973 20.2843 3.71569 20.5903 4.09202 20.782C4.51984 21 5.07989 21 6.2 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     <span class="text-xs mt-1 md:mt-0 md:text-base">الامتحانات</span>
                 </button>
                 <button id="nav-evaluations-btn" class="flex flex-col items-center text-gray-500 focus:outline-none p-2 md:flex-row md:justify-start md:items-center md:space-x-3 md:p-3 md:rounded-lg md:hover:bg-gray-100">
-                    <?xml version="1.0" encoding="iso-8859-1"?>
-                    <!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
-                    <svg fill="currentColor" height="24px" width="24px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
-                         viewBox="0 0 294.023 294.023" xml:space="preserve" class="nav-icon-svg">
-                        <path color-rendering="auto" image-rendering="auto" shape-rendering="auto" color-interpolation="sRGB" d="M124.916,0.002
-                        c-1.649,0.045-3.169,0.9-4.064,2.285l-14.49,21.736h-49.35c-2.761,0-5,2.239-5,5v50c0,2.761,2.239,5,5,5h50c2.761,0,5-2.239,5-5
-                        V39.574l-10,15v19.449h-40v-40h37.682L85.631,55.117l-6.146-12.293c-1.205-2.485-4.196-3.523-6.681-2.318
-                        c-2.485,1.205-3.523,4.196-2.318,6.681c0.018,0.036,0.035,0.072,0.054,0.108l10,20c1.235,2.47,4.238,3.472,6.709,2.237
-                        c0.778-0.389,1.441-0.974,1.924-1.698l40-60c1.565-2.276,0.989-5.389-1.287-6.954C127.013,0.281,125.974-0.027,124.916,0.002
-                        L124.916,0.002z M147.012,44.025c-2.761,0-5,2.239-5,5v10c0,2.761,2.239,5,5,5h90c2.761,0,5-2.239,5-5v-10c0-2.761-2.239-5-5-5
-                        H147.012z M57.012,94.06c-2.761,0-5,2.239-5,5v50c0,2.761,2.239,5,5,5h50c2.761,0,5-2.239,5-5v-50c0-2.761-2.239-5-5-5H57.012z
-                         M62.012,104.06h40v40h-40V104.06z M147.012,114.023c-2.761,0-5,2.239-5,5v10c0,2.761,2.239,5,5,5h90c2.761,0,5-2.239,5-5v-10
-                        c0-2.761-2.239-5-5-5H147.012z M57.012,164.023c-2.761,0-5,2.239-5,5v50c0,2.761,2.239,5,5,5h50c2.761,0,5-2.239,5-5v-50
-                        c0-2.761-2.239-5-5-5H57.012z M62.012,174.023h40v40h-40V174.023z M147.012,184.058c-2.761,0-5,2.239-5,5v10c0,2.761,2.239,5,5,5h90
-                        c2.761,0,5-2.239,5-5v-10c0-2.761-2.239-5-5-5H147.012z M57.012,234.023c-2.761,0-5,2.239-5,5v50c0,2.761,2.239,5,5,5h50
-                        c2.761,0,5-2.239,5-5v-50c0-2.761-2.239-5-5-5L57.012,234.023L57.012,234.023z M62.012,244.023h40v40h-40V244.023z M147.012,254.023
-                        c-2.761,0-5,2.239-5,5v10c0,2.761,2.239,5,5,5h90c2.761,0,5-2.239,5-5v-10c0-2.761-2.239-5-5-5H147.012z"/>
-                    </svg>
+                    <svg class="nav-icon-svg" fill="currentColor" height="24px" width="24px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 294.023 294.023" xml:space="preserve"><path color-rendering="auto" image-rendering="auto" shape-rendering="auto" color-interpolation="sRGB" d="M124.916,0.002 c-1.649,0.045-3.169,0.9-4.064,2.285l-14.49,21.736h-49.35c-2.761,0-5,2.239-5,5v50c0,2.761,2.239,5,5,5h50c2.761,0,5-2.239,5-5 V39.574l-10,15v19.449h-40v-40h37.682L85.631,55.117l-6.146-12.293c-1.205-2.485-4.196-3.523-6.681-2.318 c-2.485,1.205-3.523,4.196-2.318,6.681c0.018,0.036,0.035,0.072,0.054,0.108l10,20c1.235,2.47,4.238,3.472,6.709,2.237 c0.778-0.389,1.441-0.974,1.924-1.698l40-60c1.565-2.276,0.989-5.389-1.287-6.954C127.013,0.281,125.974-0.027,124.916,0.002 L124.916,0.002z M147.012,44.025c-2.761,0-5,2.239-5,5v10c0,2.761,2.239,5,5,5h90c2.761,0,5-2.239,5-5v-10c0-2.761-2.239-5-5-5 H147.012z M57.012,94.06c-2.761,0-5,2.239-5,5v50c0,2.761,2.239,5,5,5h50c2.761,0,5-2.239,5-5v-50c0-2.761-2.239-5-5-5H57.012z M62.012,104.06h40v40h-40V104.06z M147.012,114.023c-2.761,0-5,2.239-5,5v10c0,2.761,2.239,5,5,5h90c2.761,0,5-2.239,5-5v-10 c0-2.761-2.239-5-5-5H147.012z M57.012,164.023c-2.761,0-5,2.239-5,5v50c0,2.761,2.239,5,5,5h50c2.761,0,5-2.239,5-5v-50 c0-2.761-2.239-5-5-5H57.012z M62.012,174.023h40v40h-40V174.023z M147.012,184.058c-2.761,0-5,2.239-5,5v10c0,2.761,2.239,5,5,5h90 c2.761,0,5-2.239,5-5v-10c0-2.761-2.239-5-5-5H147.012z M57.012,234.023c-2.761,0-5,2.239-5,5v50c0,2.761,2.239,5,5,5h50 c2.761,0,5-2.239,5-5v-50c0-2.761-2.239-5-5-5L57.012,234.023L57.012,234.023z M62.012,244.023h40v40h-40V244.023z M147.012,254.023 c-2.761,0-5,2.239-5,5v10c0,2.761,2.239,5,5,5h90c2.761,0,5-2.239,5-5v-10c0-2.761-2.239-5-5-5H147.012z"/></svg>
                     <span class="text-xs mt-1 md:mt-0 md:text-base">التقييمات</span>
+                </button>
+                <button id="nav-store-btn" class="flex flex-col items-center text-gray-500 focus:outline-none p-2 md:flex-row md:justify-start md:items-center md:space-x-3 md:p-3 md:rounded-lg md:hover:bg-gray-100">
+                    <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4H6zM3 6h18M16 10a4 4 0 1 1-8 0" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <span class="text-xs mt-1 md:mt-0 md:text-base">المتجر</span>
+                </button>
+                <button id="nav-profile-btn" class="flex flex-col items-center text-gray-500 focus:outline-none p-2 md:flex-row md:justify-start md:items-center md:space-x-3 md:p-3 md:rounded-lg md:hover:bg-gray-100">
+                    <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <span class="text-xs mt-1 md:mt-0 md:text-base">الملف الشخصي</span>
                 </button>
             </div>
         </nav>
@@ -269,7 +276,7 @@
         // استيراد وظائف Firebase اللازمة
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getFirestore, collection, onSnapshot, doc, getDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        import { getAuth } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         
         // تكوين Firebase
         const firebaseConfig = {
@@ -295,8 +302,10 @@
         // الحصول على عناصر DOM
         const examsPage = document.getElementById('exams-page');
         const evaluationsPage = document.getElementById('evaluations-page');
+        const storePage = document.getElementById('store-page');
+        const profilePage = document.getElementById('profile-page');
         const examView = document.getElementById('exam-view');
-        const resultsPage = document.getElementById('results-page'); // العنصر الجديد لصفحة النتائج
+        const resultsPage = document.getElementById('results-page');
         
         const examsList = document.getElementById('exams-list');
         const noExamsMessage = document.getElementById('no-exams-message');
@@ -304,11 +313,13 @@
         const examTitle = document.getElementById('exam-title');
         const submitExamBtn = document.getElementById('submit-exam-btn');
 
-        const resultsContainer = document.getElementById('results-container'); // حاوية النتائج
-        const backFromResultsBtn = document.getElementById('back-from-results-btn'); // زر العودة من النتائج
+        const resultsContainer = document.getElementById('results-container');
+        const backFromResultsBtn = document.getElementById('back-from-results-btn');
 
         const navExamsBtn = document.getElementById('nav-exams-btn');
         const navEvaluationsBtn = document.getElementById('nav-evaluations-btn');
+        const navStoreBtn = document.getElementById('nav-store-btn');
+        const navProfileBtn = document.getElementById('nav-profile-btn');
         const bottomNav = document.getElementById('bottom-nav');
 
         const customAlertOverlay = document.getElementById('custom-alert');
@@ -373,6 +384,8 @@
             // إخفاء جميع الصفحات أولاً
             examsPage.classList.add('hidden');
             evaluationsPage.classList.add('hidden');
+            storePage.classList.add('hidden');
+            profilePage.classList.add('hidden');
             examView.classList.add('hidden');
             resultsPage.classList.add('hidden');
             
@@ -392,10 +405,11 @@
             }
 
             // تحديث أزرار التنقل
-            navExamsBtn.classList.remove('text-blue-600');
-            navExamsBtn.classList.add('text-gray-500');
-            navEvaluationsBtn.classList.remove('text-blue-600');
-            navEvaluationsBtn.classList.add('text-gray-500');
+            const navButtons = [navExamsBtn, navEvaluationsBtn, navStoreBtn, navProfileBtn];
+            navButtons.forEach(btn => {
+                btn.classList.remove('text-blue-600');
+                btn.classList.add('text-gray-500');
+            });
             
             const activeButton = document.querySelector(`#nav-${pageId.replace('-page', '')}-btn`);
             if (activeButton) {
@@ -411,6 +425,8 @@
         // مستمعو أحداث التنقل
         navExamsBtn.addEventListener('click', () => showPage('exams-page'));
         navEvaluationsBtn.addEventListener('click', () => showPage('evaluations-page'));
+        navStoreBtn.addEventListener('click', () => showPage('store-page'));
+        navProfileBtn.addEventListener('click', () => showPage('profile-page'));
 
         function renderSkeletonCards() {
             examsList.innerHTML = '';
@@ -579,6 +595,44 @@
             });
 
             showResultsPage(currentExam, userAnswers);
+        });
+
+        // --- Auth Logic ---
+        const provider = new GoogleAuthProvider();
+        const signInBtn = document.getElementById('sign-in-btn');
+        const signOutBtn = document.getElementById('sign-out-btn');
+        const userInfoDiv = document.getElementById('user-info');
+        const userNameSpan = document.getElementById('user-name');
+        const userUidSpan = document.getElementById('user-uid');
+
+        signInBtn.addEventListener('click', () => {
+            signInWithPopup(auth, provider)
+                .catch((error) => {
+                    console.error("Google Sign-In Error:", error.message);
+                    showCustomAlert("فشل تسجيل الدخول: " + error.message);
+                });
+        });
+
+        signOutBtn.addEventListener('click', () => {
+            signOut(auth).catch((error) => {
+                console.error("Sign-Out Error:", error);
+            });
+        });
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // User is signed in
+                userInfoDiv.classList.remove('hidden');
+                signInBtn.classList.add('hidden');
+                userNameSpan.textContent = user.displayName;
+                userUidSpan.textContent = user.uid;
+            } else {
+                // User is signed out
+                userInfoDiv.classList.add('hidden');
+                signInBtn.classList.remove('hidden');
+                userNameSpan.textContent = '';
+                userUidSpan.textContent = '';
+            }
         });
         
         // --- تحميل البيانات ---
