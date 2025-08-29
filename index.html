@@ -442,7 +442,7 @@
                 clearInterval(examTimerInterval);
                 examTimerInterval = null;
             }
-            examTimerDiv.classList.add('hidden');
+            examTimerContainer.classList.add('hidden');
 
             // إظهار أو إخفاء شريط التنقل وتعديل التخطيط
             if (pageId === 'exam-view' || pageId === 'results-page') {
@@ -556,13 +556,13 @@
             // Timer logic
             const durationInMinutes = exam.data.duration || 30;
             let timeLeft = durationInMinutes * 60;
-            examTimerDiv.classList.remove('hidden');
+            examTimerContainer.classList.remove('hidden');
 
             examTimerInterval = setInterval(() => {
                 const minutes = Math.floor(timeLeft / 60);
                 let seconds = timeLeft % 60;
                 seconds = seconds < 10 ? '0' + seconds : seconds;
-                examTimerDiv.textContent = `${minutes}:${seconds}`;
+                examTimerSpan.textContent = `${minutes}:${seconds}`;
                 timeLeft--;
 
                 if (timeLeft < 0) {
@@ -581,7 +581,7 @@
                 clearInterval(examTimerInterval);
                 examTimerInterval = null;
             }
-            examTimerDiv.classList.add('hidden');
+            examTimerContainer.classList.add('hidden');
 
             const userAnswers = [];
             currentExam.data.questions.forEach((question, index) => {
@@ -778,6 +778,22 @@
                 console.error("خطأ في جلب الامتحانات:", error);
                 showCustomAlert('فشل في جلب قائمة الامتحانات.');
                 examsList.innerHTML = '<p class="text-center text-red-500 col-span-full">فشل تحميل الامتحانات.</p>';
+            });
+        }
+        
+        // عرض صفحة الامتحانات بشكل افتراضي عند تحميل الصفحة
+        showPage('exams-page');
+
+    </script>
+</body>
+</html>
+  الصفحة
+        showPage('exams-page');
+
+    </script>
+</body>
+</html>
+msList.innerHTML = '<p class="text-center text-red-500 col-span-full">فشل تحميل الامتحانات.</p>';
             });
         }
         
