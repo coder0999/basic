@@ -128,6 +128,38 @@
             border: 2px solid white;
         }
 
+        .question-points-box {
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            background-color: #f59e0b; /* amber-500 */
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.125rem; /* text-lg */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 2px solid white;
+        }
+
+        #exam-timer {
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            background-color: #ef4444; /* red-500 */
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: bold;
+            font-size: 1.25rem;
+            z-index: 1100;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
         /* Skeleton Loader */
         .skeleton-card {
             background-color: #e5e7eb; /* gray-200 */
@@ -172,6 +204,7 @@
 
         <!-- Main Content Area -->
         <main class="flex-grow p-2 md:mb-0 mb-20 md:mr-48">
+            <div id="exam-timer" class="hidden"></div>
             <!-- The rest of your page content (exam cards, etc.) will stay here -->
             <!-- صفحة الامتحانات (عرض البطاقات) -->
             <div id="exams-page" class="container mx-auto p-4 flex-grow">
@@ -303,6 +336,7 @@
         let unsubscribeFromExams = null; // للاشتراك في التحديثات
         let unsubscribeFromSubjects = null;
         let currentExam = null; // لتخزين الامتحان الحالي
+        let examTimerInterval = null; // لتخزين مؤقت الامتحان
         
         // الحصول على عناصر DOM
         const examsPage = document.getElementById('exams-page');
@@ -334,6 +368,7 @@
 
         const userPointsSpan = document.getElementById('user-points');
         const addPointsBtn = document.getElementById('add-points-btn');
+        const examTimerDiv = document.getElementById('exam-timer');
 
         // دالة لعرض مربع حواري مخصص
         function showCustomAlert(message) {
@@ -403,6 +438,12 @@
 
             const mainContent = document.querySelector('main');
 
+            if (examTimerInterval) {
+                clearInterval(examTimerInterval);
+                examTimerInterval = null;
+            }
+            examTimerDiv.classList.add('hidden');
+
             // إظهار أو إخفاء شريط التنقل وتعديل التخطيط
             if (pageId === 'exam-view' || pageId === 'results-page') {
                 bottomNav.classList.add('hidden');
@@ -460,6 +501,7 @@
             } else {
                 noExamsMessage.classList.add('hidden');
                 exams.forEach(exam => {
+                    const totalPoints = exam.data.questions.reduce((sum, q) => sum + (q.points || 1), 0);
                     const examCard = document.createElement('div');
                     examCard.className = 'bg-white p-6 md:p-8 rounded-xl shadow-lg cursor-pointer flex flex-col justify-between';
                     examCard.dataset.id = exam.id;
@@ -468,6 +510,7 @@
                         <div>
                             <h3 class="text-xl md:text-2xl font-bold text-gray-800 text-center">${examName}</h3>
                             <p class="text-center text-gray-500 mt-4 text-base md:text-lg">${exam.data.questions.length} أسئلة</p>
+                            <p class="text-center text-blue-600 font-bold mt-2 text-base md:text-lg">إجمالي النقاط: ${totalPoints}</p>
                         </div>
                     `;
                     examCard.addEventListener('click', () => startExam(exam));
@@ -487,9 +530,13 @@
             exam.data.questions.forEach((question, index) => {
                 const questionElement = document.createElement('div');
                 questionElement.className = 'p-6 bg-white rounded-lg shadow-md relative w-full md:h-[80vh]';
+                const questionPoints = question.points || 1;
                 questionElement.innerHTML = `
                     <div class="question-number-box">
                         <span>${index + 1}</span>
+                    </div>
+                    <div class="question-points-box">
+                        <span>${questionPoints}</span>
                     </div>
                     <p class="text-lg md:text-3xl text-gray-800 mb-4 break-words pt-5">${question.text}</p>
                     <div class="space-y-3 md:space-y-8">
@@ -505,19 +552,59 @@
                 `;
                 questionsContainer.appendChild(questionElement);
             });
+
+            // Timer logic
+            const durationInMinutes = exam.data.duration || 30;
+            let timeLeft = durationInMinutes * 60;
+            examTimerDiv.classList.remove('hidden');
+
+            examTimerInterval = setInterval(() => {
+                const minutes = Math.floor(timeLeft / 60);
+                let seconds = timeLeft % 60;
+                seconds = seconds < 10 ? '0' + seconds : seconds;
+                examTimerDiv.textContent = `${minutes}:${seconds}`;
+                timeLeft--;
+
+                if (timeLeft < 0) {
+                    clearInterval(examTimerInterval);
+                    examTimerInterval = null;
+                    showCustomAlert("انتهى الوقت!");
+                    submitCurrentExam();
+                }
+            }, 1000);
         }
         
+        async function submitCurrentExam() {
+            if (!currentExam) return;
+
+            if (examTimerInterval) {
+                clearInterval(examTimerInterval);
+                examTimerInterval = null;
+            }
+            examTimerDiv.classList.add('hidden');
+
+            const userAnswers = [];
+            currentExam.data.questions.forEach((question, index) => {
+                const selectedOption = document.querySelector(`input[name="question-${index}"]:checked`);
+                userAnswers.push(selectedOption ? selectedOption.value : null);
+            });
+
+            await showResultsPage(currentExam, userAnswers);
+        }
+
         // وظيفة جديدة لعرض صفحة النتائج
-        function showResultsPage(exam, userAnswers) {
+        async function showResultsPage(exam, userAnswers) {
             showPage('results-page');
             resultsContainer.className = 'space-y-8';
             resultsContainer.innerHTML = '';
             
             let correctAnswersCount = 0;
+            let earnedPoints = 0;
             const totalQuestions = exam.data.questions.length;
 
             exam.data.questions.forEach((question, index) => {
                 const userAnswer = userAnswers[index];
+                const questionPoints = question.points || 1;
                 
                 let correctAnswerIndex = question.correctAnswer; 
                 let userAnswerIndex = -1;
@@ -529,6 +616,7 @@
                 if (typeof correctAnswerIndex === 'number' && correctAnswerIndex >= 0 && correctAnswerIndex < question.options.length) {
                     if (userAnswerIndex === correctAnswerIndex) {
                         correctAnswersCount++;
+                        earnedPoints += questionPoints;
                     }
                 } else {
                     correctAnswerIndex = -1;
@@ -582,28 +670,28 @@
             summaryElement.className = 'p-6 bg-blue-100 text-blue-800 rounded-lg shadow-md text-center mb-8';
             summaryElement.innerHTML = `
                 <p class="text-2xl md:text-3xl font-bold">لقد أجبت على ${correctAnswersCount} من ${totalQuestions} بشكل صحيح</p>
+                <p class="text-xl md:text-2xl mt-2">لقد حصلت على <span class="font-bold text-green-600">${earnedPoints}</span> نقطة</p>
                 <p class="text-4xl md:text-5xl font-bold mt-2">${percentage}%</p>
             `;
             resultsContainer.prepend(summaryElement);
+
+            const user = auth.currentUser;
+            if (user && earnedPoints > 0) {
+                try {
+                    await addPoints(user.uid, earnedPoints);
+                    showCustomAlert(`تمت إضافة ${earnedPoints} نقطة إلى رصيدك!`);
+                } catch (error) {
+                    console.error("Failed to add points:", error);
+                    showCustomAlert("حدث خطأ أثناء تحديث نقاطك.");
+                }
+            }
         }
         
         // مستمع لزر "العودة"
         backFromResultsBtn.addEventListener('click', () => showPage('exams-page'));
 
         // مستمع لزر "إرسال الإجابات"
-        submitExamBtn.addEventListener('click', () => {
-            const userAnswers = [];
-            currentExam.data.questions.forEach((question, index) => {
-                const selectedOption = document.querySelector(`input[name="question-${index}"]:checked`);
-                if (selectedOption) {
-                    userAnswers.push(selectedOption.value);
-                } else {
-                    userAnswers.push(null);
-                }
-            });
-
-            showResultsPage(currentExam, userAnswers);
-        });
+        submitExamBtn.addEventListener('click', submitCurrentExam);
 
         // --- Points Logic ---
         async function displayUserPoints(userId) {
