@@ -6,10 +6,8 @@ import { Link } from 'react-router-dom';
 const Exams = () => {
   const [exams, setExams] = useState([]);
   const [loading, setLoading] = useState(true);
-  const appId = 'tanya-thanawey'; // This should probably be an environment variable
-
   useEffect(() => {
-    const examsCollection = collection(db, `artifacts/${appId}/public/data/exams`);
+    const examsCollection = collection(db, 'exams');
     const unsubscribe = onSnapshot(examsCollection, (snapshot) => {
       const examsData = snapshot.docs.map(doc => ({
         id: doc.id,

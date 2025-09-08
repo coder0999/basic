@@ -13,8 +13,7 @@ const ExamView = () => {
 
   useEffect(() => {
     const fetchExam = async () => {
-      const appId = 'tanya-thanawey';
-      const examRef = doc(db, `artifacts/${appId}/public/data/exams`, examId);
+      const examRef = doc(db, 'exams', examId);
       const docSnap = await getDoc(examRef);
 
       if (docSnap.exists()) {

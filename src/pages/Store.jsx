@@ -1,27 +1,75 @@
-import React from 'react';
-import { doc, setDoc, increment } from 'firebase/firestore';
+import React, { useState, useEffect } from 'react';
+import { collection, onSnapshot, doc, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase';
 import useAuth from '../hooks/useAuth';
 import useUserPoints from '../hooks/useUserPoints';
+import PurchaseModal from '../components/PurchaseModal';
 
 const Store = () => {
   const { user } = useAuth();
-  const { points, loading } = useUserPoints();
+  const { points, loading: pointsLoading } = useUserPoints();
+  const [products, setProducts] = useState([]);
+  const [productsLoading, setProductsLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
-  const handleAddPoints = () => {
-    if (user) {
-      const userRef = doc(db, "users", user.uid);
-      setDoc(userRef, { points: increment(10) }, { merge: true })
-        .catch(e => {
-          console.error("Error adding points: ", e);
-          // You might want to show an alert to the user here
-        });
+  useEffect(() => {
+    const productsRef = collection(db, "products");
+    const unsubscribe = onSnapshot(productsRef, (snapshot) => {
+      const productsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setProducts(productsData);
+      setProductsLoading(false);
+    }, (error) => {
+      console.error("Error fetching products:", error);
+      setProductsLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const handleProductClick = (product) => {
+    if (points < product.price) {
+      alert("ليس لديك نقاط كافية");
+    } else {
+      setSelectedProduct(product);
+      setIsModalOpen(true);
     }
   };
 
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedProduct(null);
+  };
+
+  const handlePurchaseSubmit = async (formData) => {
+    if (!user || !selectedProduct) return;
+
+    try {
+      await addDoc(collection(db, "orders"), {
+        userId: user.uid,
+        userEmail: user.email,
+        productId: selectedProduct.id,
+        productName: selectedProduct.name,
+        productPrice: selectedProduct.price,
+        contactMethod: formData.contactMethod,
+        phoneNumber: formData.phoneNumber,
+        status: "pending",
+        createdAt: serverTimestamp(),
+      });
+      alert("تم إرسال طلبك بنجاح!");
+    } catch (error) {
+      console.error("Error creating order:", error);
+      alert("حدث خطأ أثناء إرسال طلبك.");
+    } finally {
+      handleCloseModal();
+    }
+  };
+  
+  const loading = pointsLoading || productsLoading;
+
   if (loading) {
     return (
-      <div className="container mx-auto p-4 flex-grow">
+      <div className="container mx-auto p-4 flex-grow flex justify-center items-center">
         <div className="spinner"></div>
       </div>
     );
@@ -29,15 +77,35 @@ const Store = () => {
 
   return (
     <div className="container mx-auto p-4 flex-grow">
-      <div className="fixed top-4 right-4 md:right-52 bg-blue-500 text-white p-6 rounded-full shadow-lg flex items-center">
-        <span className="text-4xl font-bold">{points}</span>
-        <span className="mr-2">نقاط</span>
+      {/* Points Counter */}
+      <div className="fixed top-20 right-4 bg-blue-500 text-white p-3 rounded-full shadow-lg flex items-center">
+        <span className="text-xl font-bold">{points}</span>
+        <span className="mr-2 text-sm">نقاط</span>
       </div>
-      <div className="mt-40 text-center">
-        {user && (
-          <button onClick={handleAddPoints} className="bg-green-600 text-white font-bold py-2 px-4 rounded-lg">إضافة 10 نقاط (تجريبي)</button>
-        )}
+
+      {/* Products Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
+        {products.map(product => (
+          <div 
+            key={product.id} 
+            className="bg-white rounded-lg shadow-md p-4 cursor-pointer transform hover:scale-105 transition-transform"
+            onClick={() => handleProductClick(product)}
+          >
+            <h3 className="text-xl font-bold mb-2">{product.name}</h3>
+            <p className="text-gray-700 text-lg">{product.price} نقطة</p>
+          </div>
+        ))}
       </div>
+
+      {/* Purchase Modal */}
+      {selectedProduct && (
+        <PurchaseModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          product={selectedProduct}
+          onSubmit={handlePurchaseSubmit}
+        />
+      )}
     </div>
   );
 };

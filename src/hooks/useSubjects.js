@@ -5,10 +5,8 @@ import { db } from '../firebase';
 const useSubjects = () => {
   const [subjects, setSubjects] = useState([]);
   const [loading, setLoading] = useState(true);
-  const appId = 'tanya-thanawey'; // This should probably be an environment variable
-
   useEffect(() => {
-    const subjectsCollectionRef = collection(db, `artifacts/${appId}/public/data/subjects`);
+    const subjectsCollectionRef = collection(db, 'subjects');
     const unsubscribe = onSnapshot(subjectsCollectionRef, (snapshot) => {
       const subjectsData = snapshot.docs.map(doc => doc.data());
       setSubjects(subjectsData);
