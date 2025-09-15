@@ -1,4 +1,3 @@
-import React from 'react';
 import useSubjects from '../hooks/useSubjects';
 
 const Evaluations = () => {
@@ -7,7 +6,7 @@ const Evaluations = () => {
   if (loading) {
     return (
       <div className="container mx-auto p-4 flex-grow">
-        <h1 className="text-3xl md:text-4xl font-bold text-center text-blue-600 my-8">التقييمات الاسبوعية محلولة</h1>
+        <h1 className="text-2xl font-bold text-gray-800 mb-8 text-right">التقييمات الاسبوعية محلولة</h1>
         <div className="spinner"></div>
       </div>
     );
@@ -15,7 +14,7 @@ const Evaluations = () => {
 
   return (
     <div className="container mx-auto p-4 flex-grow">
-      <h1 className="text-3xl md:text-4xl font-bold text-center text-blue-600 my-8">التقييمات الاسبوعية محلولة</h1>
+      <h1 className="text-2xl font-bold text-gray-800 mb-8 text-right">التقييمات الاسبوعية محلولة</h1>
       <div id="subjects-container" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {subjects.length === 0 ? (
           <p className="col-span-full text-center text-gray-600">لا توجد مواد متاحة.</p>

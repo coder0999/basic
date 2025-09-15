@@ -1,45 +1,41 @@
 import { useState, useEffect } from 'react';
-import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
+import { collection, query, orderBy, onSnapshot, doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
-import useAuth from './useAuth';
 
-const useLeaderboard = () => {
-  const { user } = useAuth();
+const useLeaderboard = (examId) => {
   const [leaderboard, setLeaderboard] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [userRank, setUserRank] = useState(null);
-  const [totalUsers, setTotalUsers] = useState(0);
-  const [percentage, setPercentage] = useState(0);
 
   useEffect(() => {
-    const usersCollectionRef = collection(db, "users");
-    const q = query(usersCollectionRef, orderBy("points", "desc"));
+    if (!examId) {
+      setLeaderboard([]);
+      setLoading(false);
+      return;
+    }
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const allUsers = snapshot.docs.map(doc => doc.data());
-      
-      setLeaderboard(allUsers.slice(0, 10));
-      setTotalUsers(allUsers.length);
+    setLoading(true);
+    const submissionsRef = collection(db, "exam_results", examId, "submissions");
+    const q = query(submissionsRef, orderBy("percentage", "desc"));
 
-      if (user) {
-        const currentUserRank = allUsers.findIndex(u => u.uid === user.uid) + 1;
-        setUserRank(currentUserRank);
+    const unsubscribe = onSnapshot(q, async (snapshot) => {
+      const submissions = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
 
-        if (currentUserRank > 0) {
-          if (allUsers.length <= 1) {
-            setPercentage(100);
-          } else {
-            const calculatedPercentage = Math.round(((allUsers.length - currentUserRank) / (allUsers.length - 1)) * 100);
-            setPercentage(calculatedPercentage);
-          }
-        } else {
-          setPercentage(0);
-        }
-      } else {
-        setUserRank(null);
-        setPercentage(0);
-      }
+      const leaderboardData = await Promise.all(
+        submissions.map(async (submission) => {
+          const userRef = doc(db, "users", submission.userId);
+          const userSnap = await getDoc(userRef);
+          const userName = userSnap.exists() ? userSnap.data().name : 'مستخدم غير معروف';
+          return {
+            ...submission,
+            name: userName,
+          };
+        })
+      );
 
+      setLeaderboard(leaderboardData);
       setLoading(false);
     }, (error) => {
       console.error("Error fetching leaderboard:", error);
@@ -47,9 +43,9 @@ const useLeaderboard = () => {
     });
 
     return () => unsubscribe();
-  }, [user]);
+  }, [examId]);
 
-  return { leaderboard, loading, userRank, totalUsers, percentage };
+  return { leaderboard, loading };
 };
 
 export default useLeaderboard;

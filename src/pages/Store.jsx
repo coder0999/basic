@@ -75,13 +75,11 @@ const Store = () => {
     );
   }
 
-  return (
+    return (
     <div className="container mx-auto p-4 flex-grow">
+      <h1 className="text-2xl font-bold text-gray-800 mb-8 text-right">المتجر</h1>
       {/* Points Counter */}
-      <div className="fixed top-20 right-4 bg-blue-500 text-white p-3 rounded-full shadow-lg flex items-center">
-        <span className="text-xl font-bold">{points}</span>
-        <span className="mr-2 text-sm">نقاط</span>
-      </div>
+      
 
       {/* Products Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">

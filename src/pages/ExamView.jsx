@@ -10,6 +10,7 @@ const ExamView = () => {
   const [loading, setLoading] = useState(true);
   const [userAnswers, setUserAnswers] = useState([]);
   const [timeLeft, setTimeLeft] = useState(0);
+  const [showWarning, setShowWarning] = useState(false);
 
   useEffect(() => {
     const fetchExam = async () => {
@@ -30,9 +31,13 @@ const ExamView = () => {
     fetchExam();
   }, [examId]);
 
+  const proceedToSubmit = () => {
+    navigate(`/results/${examId}`, { state: { userAnswers, exam } });
+  };
+
   useEffect(() => {
     if (timeLeft === 0 && exam) {
-      handleSubmit();
+      proceedToSubmit();
     }
     if (!timeLeft) return;
 
@@ -50,7 +55,12 @@ const ExamView = () => {
   };
 
   const handleSubmit = () => {
-    navigate(`/results/${examId}`, { state: { userAnswers, exam } });
+    const allAnswered = userAnswers.every(answer => answer !== null);
+    if (allAnswered) {
+      proceedToSubmit();
+    } else {
+      setShowWarning(true);
+    }
   };
 
   if (loading) {
@@ -69,6 +79,18 @@ const ExamView = () => {
 
   return (
     <div className="py-4 flex-grow">
+      {showWarning && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white p-8 rounded-lg shadow-xl text-center w-11/12 md:w-auto">
+            <h3 className="text-xl font-bold mb-4">تحذير</h3>
+            <p className="mb-6">لم تقم بالإجابة على جميع الأسئلة. هل أنت متأكد أنك تريد تسليم الامتحان؟</p>
+            <div className="flex justify-center space-x-4 space-x-reverse">
+              <button onClick={proceedToSubmit} className="bg-green-600 text-white font-bold py-2 px-6 rounded-lg">نعم، قم بالتسليم</button>
+              <button onClick={() => setShowWarning(false)} className="bg-gray-500 text-white font-bold py-2 px-6 rounded-lg">لا، ارجع للأسئلة</button>
+            </div>
+          </div>
+        </div>
+      )}
       <div id="exam-timer" className="fixed top-4 left-4 bg-red-500 text-white p-2 rounded-lg shadow-lg">
         {formatTime(timeLeft)}
       </div>

@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { doc, setDoc, increment } from 'firebase/firestore';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import useAuth from '../hooks/useAuth';
 
@@ -35,12 +35,42 @@ const ResultsPage = () => {
   }, [exam, userAnswers]);
 
   useEffect(() => {
-    if (user && earnedPoints > 0) {
-      const userRef = doc(db, "users", user.uid);
-      setDoc(userRef, { points: increment(earnedPoints) }, { merge: true })
-        .catch(e => console.error("Error adding points: ", e));
+    if (user && exam) {
+      const submissionRef = doc(db, "exam_results", exam.id, "submissions", user.uid);
+      const submissionData = {
+        email: user.email,
+        userId: user.uid,
+        percentage,
+        correctAnswers: correctAnswersCount,
+        totalQuestions,
+        earnedPoints,
+        userAnswers,
+        submittedAt: new Date()
+      };
+
+      setDoc(submissionRef, submissionData, { merge: true })
+        .then(() => console.log("Exam results saved successfully!"))
+        .catch(e => console.error("Error saving exam results: ", e));
+
+      // Update user's total points
+      const updateUserPoints = async () => {
+        const userRef = doc(db, "users", user.uid);
+        try {
+          const userSnap = await getDoc(userRef);
+          const currentPoints = userSnap.data()?.points || 0;
+          const newPoints = currentPoints + earnedPoints;
+          await setDoc(userRef, { points: newPoints }, { merge: true });
+          console.log("User points updated successfully!");
+        } catch (error) {
+          console.error("Error updating user points: ", error);
+        }
+      };
+
+      if (earnedPoints > 0) {
+        updateUserPoints();
+      }
     }
-  }, [user, earnedPoints]);
+  }, [user, exam, percentage, correctAnswersCount, totalQuestions, earnedPoints, userAnswers]);
 
   if (!exam) {
     return <div>No results to display.</div>;
@@ -61,15 +91,17 @@ const ResultsPage = () => {
           const userAnswerIndex = question.options.findIndex(opt => (typeof opt === 'string' ? opt : opt.text) === userAnswer);
           const isCorrect = userAnswerIndex === correctAnswerIndex;
           const questionPoints = question.points || 1;
-          const pointsClass = isCorrect ? 'text-black' : 'text-gray-500 strikethrough-center';
-          const pointsHTML = `<div class="result-points-box ${pointsClass}"><span>${questionPoints} نقطة</span></div>`;
 
           return (
             <div key={index} className="p-6 bg-white rounded-lg shadow-md relative w-full">
               <div className="question-number-box">
                 <span>{index + 1}</span>
               </div>
-              <div dangerouslySetInnerHTML={{ __html: pointsHTML }} />
+              <div className="result-points-box">
+                <span className={isCorrect ? 'text-black' : 'text-gray-500 line-through'}>
+                  {questionPoints} نقطة
+                </span>
+              </div>
               <p className="text-lg md:text-xl text-gray-800 mb-4 break-words pt-16">{question.text}</p>
               <div className="space-y-3">
                 {question.options.map((option, optIndex) => {
