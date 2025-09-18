@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 const Exams = () => {
   const [exams, setExams] = useState([]);
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const examsCollection = collection(db, 'exams');
     const unsubscribe = onSnapshot(examsCollection, (snapshot) => {
@@ -47,7 +48,7 @@ const Exams = () => {
 
   return (
     <div className="container mx-auto p-4 flex-grow">
-      <h1 className="text-2xl font-bold text-gray-800 mb-8 text-right">الامتحانات المتاحة</h1>
+      
       <div id="exams-list" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {loading ? (
           <>

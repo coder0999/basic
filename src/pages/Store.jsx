@@ -77,7 +77,7 @@ const Store = () => {
 
     return (
     <div className="container mx-auto p-4 flex-grow">
-      <h1 className="text-2xl font-bold text-gray-800 mb-8 text-right">المتجر</h1>
+      
       {/* Points Counter */}
       
 
