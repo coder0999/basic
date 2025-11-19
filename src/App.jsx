@@ -8,16 +8,15 @@ import Store from './pages/Store';
 import Profile from './pages/Profile';
 import ExamView from './pages/ExamView';
 import ResultsPage from './pages/ResultsPage';
-import LeaderboardPage from './pages/LeaderboardPage';
 import PurchaseOrders from './pages/PurchaseOrders';
 import { AuthProvider } from './context/AuthContext.jsx';
 import useAuth from './hooks/useAuth';
 
 const Layout = () => {
   const location = useLocation();
-  const showTopBar = ['/', '/store', '/profile', '/evaluations', '/leaderboard'].includes(location.pathname);
+  const showTopBar = ['/', '/store', '/profile', '/evaluations'].includes(location.pathname);
   const mainContentMargin = 'md:mr-20';
-  const isSpecialPage = location.pathname === '/profile' || location.pathname === '/leaderboard';
+  const isSpecialPage = location.pathname === '/profile';
 
   const mainClasses = `${mainContentMargin} ${isSpecialPage ? 'mb-0' : 'p-4 mt-16 mb-16 md:mb-0'}`;
 
@@ -71,7 +70,6 @@ const AppContent = () => {
           <Route path="evaluations" element={<Evaluations />} />
           <Route path="store" element={<Store />} />
           <Route path="profile" element={<Profile />} />
-          <Route path="leaderboard" element={<LeaderboardPage />} />
         </Route>
         <Route element={<TopBarOnlyLayout backButtonLink="/profile" />}>
           <Route path="/purchase-orders" element={<PurchaseOrders />} />

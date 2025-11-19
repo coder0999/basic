@@ -1,0 +1,102 @@
+/* --- Original Styles --- */
+.page-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.page {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #fff;
+}
+
+/* Default Forward Transition */
+.page.page-enter {
+    transform: translateX(100%);
+    z-index: 20;
+}
+.page.page-enter-active {
+    transform: translateX(0);
+    transition: transform 350ms ease-in-out;
+}
+.page.page-exit {
+    transform: translateX(0);
+    z-index: 10;
+}
+.page.page-exit-active {
+    transform: translateX(-20%);
+    transition: transform 350ms ease-in-out;
+}
+
+/* Default Backward Transition */
+.page.page-pop-enter {
+    transform: translateX(-20%);
+    z-index: 10;
+}
+.page.page-pop-enter-active {
+    transform: translateX(0);
+    transition: transform 350ms ease-in-out;
+}
+.page.page-pop-exit {
+    transform: translateX(0);
+    z-index: 20;
+}
+.page.page-pop-exit-active {
+    transform: translateX(100%);
+    transition: transform 350ms ease-in-out;
+}
+
+/* --- Scoped animations for Profile <-> PurchaseOrders transition (WhatsApp Style from Left) --- */
+
+.profile-animation-container .page {
+    transition: none; /* Use keyframes instead of transitions */
+}
+
+.profile-animation-container .page-enter-active {
+    animation: profile-in-enter 450ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    z-index: 20;
+}
+
+.profile-animation-container .page-exit-active {
+    animation: profile-out-exit 450ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    z-index: 10;
+}
+
+.profile-animation-container .page-pop-enter-active {
+    animation: profile-in-pop-enter 450ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    z-index: 10;
+}
+
+.profile-animation-container .page-pop-exit-active {
+    animation: profile-out-pop-exit 450ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    z-index: 20;
+}
+
+/* New page slides in from the LEFT */
+@keyframes profile-in-enter {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0); }
+}
+
+/* Old page slides away to the RIGHT (pushed by new page) */
+@keyframes profile-out-exit {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(30%); opacity: 0; }
+}
+
+/* Old page slides back in from the RIGHT */
+@keyframes profile-in-pop-enter {
+    from { transform: translateX(30%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+/* Current page slides back out to the LEFT */
+@keyframes profile-out-pop-exit {
+    from { transform: translateX(0); }
+    to { transform: translateX(-100%); }
+}

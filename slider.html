@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Style Transitions</title>
+    <style>
+        body {
+            background-color: #f0f0f0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .header {
+            width: 100%;
+            background-color: #ffffff;
+            padding: 15px 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            box-sizing: border-box;
+            position: relative;
+            z-index: 100;
+        }
+        .back-arrow {
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            visibility: hidden;
+        }
+        .app-container {
+            flex-grow: 1;
+            position: relative;
+            background-color: #e5ddd5; /* WhatsApp-like background */
+        }
+        .page {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            opacity: 0;
+            visibility: hidden;
+        }
+        .page.active {
+            opacity: 1;
+            visibility: visible;
+            z-index: 10;
+        }
+
+        /* Forward Transition (New page slides over old) */
+        .page.is-entering {
+            animation: activity-in-enter 350ms forwards;
+            z-index: 20;
+        }
+        .page.is-exiting {
+            animation: activity-out-exit 350ms forwards;
+            z-index: 10;
+        }
+
+        /* Backward Transition (Current page slides away) */
+        .page.is-pop-entering {
+            animation: activity-in-pop-enter 350ms forwards;
+            z-index: 10;
+        }
+        .page.is-pop-exiting {
+            animation: activity-out-pop-exit 350ms forwards;
+            z-index: 20;
+        }
+
+        @keyframes activity-in-enter {
+            from { transform: translateX(-100%); opacity: 0.8; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes activity-out-exit {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(20%); opacity: 0; }
+        }
+        @keyframes activity-in-pop-enter {
+            from { transform: translateX(20%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes activity-out-pop-exit {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(-100%); opacity: 0.8; }
+        }
+
+        .menu-option {
+            padding: 15px 30px;
+            margin: 10px;
+            background-color: #007aff;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="back-arrow">&rarr;</div>
+    </div>
+
+    <div class="app-container">
+        <div class="page active" id="page-0">
+            <div>
+                <h2>Main Menu</h2>
+                <div class="menu-option" data-target="page-1">Option 1</div>
+                <div class="menu-option" data-target="page-2">Option 2</div>
+                <div class="menu-option" data-target="page-3">Option 3</div>
+            </div>
+        </div>
+        <div class="page" id="page-1"> <h2>Page 1</h2> <p>Content for Option 1.</p> </div>
+        <div class="page" id="page-2"> <h2>Page 2</h2> <p>Content for Option 2.</p> </div>
+        <div class="page" id="page-3"> <h2>Page 3</h2> <p>Content for Option 3.</p> </div>
+    </div>
+
+    <script>
+        const backArrow = document.querySelector('.back-arrow');
+        let isNavigating = false;
+
+        function goToPage(targetId) {
+            if (isNavigating) return;
+            isNavigating = true;
+
+            const targetPage = document.getElementById(targetId);
+            const currentPage = document.querySelector('.page.active');
+            if (!targetPage || targetPage === currentPage) {
+                isNavigating = false;
+                return;
+            }
+
+            targetPage.classList.add('active', 'is-entering');
+            currentPage.classList.add('is-exiting');
+            
+            backArrow.style.visibility = 'visible';
+
+            targetPage.addEventListener('animationend', () => {
+                currentPage.classList.remove('active', 'is-exiting');
+                targetPage.classList.remove('is-entering');
+                isNavigating = false;
+            }, { once: true });
+        }
+
+        function goBack() {
+            if (isNavigating) return;
+            isNavigating = true;
+
+            const currentPage = document.querySelector('.page.active');
+            const targetPage = document.getElementById('page-0');
+            if (currentPage === targetPage) {
+                isNavigating = false;
+                return;
+            }
+
+            targetPage.classList.add('active', 'is-pop-entering');
+            currentPage.classList.add('is-pop-exiting');
+
+            backArrow.style.visibility = 'hidden';
+
+            targetPage.addEventListener('animationend', () => {
+                currentPage.classList.remove('active', 'is-pop-exiting');
+                targetPage.classList.remove('is-pop-entering');
+                isNavigating = false;
+            }, { once: true });
+        }
+
+        document.querySelectorAll('.menu-option').forEach(item => {
+            item.addEventListener('click', () => goToPage(item.dataset.target));
+        });
+
+        backArrow.addEventListener('click', goBack);
+    </script>
+
+</body>
+</html>
