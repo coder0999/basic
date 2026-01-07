@@ -83,9 +83,21 @@ const AppContent = () => {
   );
 }
 
+import { Toaster } from 'react-hot-toast';
+
 function App() {
   return (
     <AuthProvider>
+      <Toaster
+        position="top-center"
+        reverseOrder={false}
+        toastOptions={{
+          style: {
+            background: '#363636',
+            color: '#fff',
+          },
+        }}
+      />
       <AppContent />
     </AuthProvider>
   );
