@@ -4,7 +4,7 @@ import { db } from '../firebase';
 
 const useLeaderboard = (examId) => {
   const [leaderboard, setLeaderboard] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!examId) {
@@ -13,11 +13,15 @@ const useLeaderboard = (examId) => {
       return;
     }
 
-    setLoading(true);
+    const timer = setTimeout(() => {
+      setLoading(true);
+    }, 500); // Only show loader if loading takes more than 500ms
+
     const submissionsRef = collection(db, "exam_results", examId, "submissions");
     const q = query(submissionsRef, orderBy("percentage", "desc"));
 
     const unsubscribe = onSnapshot(q, async (snapshot) => {
+      clearTimeout(timer); // Clear timer if data loads quickly
       const submissions = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
@@ -38,11 +42,15 @@ const useLeaderboard = (examId) => {
       setLeaderboard(leaderboardData);
       setLoading(false);
     }, (error) => {
+      clearTimeout(timer); // Also clear on error
       console.error("Error fetching leaderboard:", error);
       setLoading(false);
     });
 
-    return () => unsubscribe();
+    return () => {
+      clearTimeout(timer);
+      unsubscribe();
+    };
   }, [examId]);
 
   return { leaderboard, loading };

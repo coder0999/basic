@@ -6,6 +6,12 @@ export default defineConfig({
   plugins: [react()],
   base: '/basic/',
   define: {
-    'process.env': {}
+    'process.env': {},
+    'global': {},
+  },
+  resolve: {
+    alias: {
+      'events': 'events',
+    },
   },
 })

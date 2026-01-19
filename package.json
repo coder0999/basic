@@ -24,8 +24,10 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.90.0",
     "dotenv": "^17.2.3",
+    "events": "^3.3.0",
     "firebase": "^12.2.1",
     "framer-motion": "^12.23.12",
+    "parse": "^8.0.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-hot-toast": "^2.6.0",

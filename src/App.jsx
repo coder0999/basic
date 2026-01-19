@@ -1,23 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, lazy, Suspense } from 'react';
 import { HashRouter, Routes, Route, Outlet, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import TopBar from './components/TopBar';
-import Exams from './pages/Exams';
-import Evaluations from './pages/Evaluations';
-import Store from './pages/Store';
-import Profile from './pages/Profile';
-import ExamView from './pages/ExamView';
-import ResultsPage from './pages/ResultsPage';
-import LeaderboardPage from './pages/LeaderboardPage';
-import PurchaseOrders from './pages/PurchaseOrders';
 import { AuthProvider } from './context/AuthContext.jsx';
 import useAuth from './hooks/useAuth';
+import { TopBarProvider } from './context/TopBarContext';
+import ScrollToTop from './components/ScrollToTop';
+import { Toaster } from 'react-hot-toast';
+
+// Lazy load page components
+const Exams = lazy(() => import('./pages/Exams'));
+const Evaluations = lazy(() => import('./pages/Evaluations'));
+const Store = lazy(() => import('./pages/Store'));
+const Profile = lazy(() => import('./pages/Profile'));
+const ExamView = lazy(() => import('./pages/ExamView'));
+const ResultsPage = lazy(() => import('./pages/ResultsPage'));
+const PurchaseOrders = lazy(() => import('./pages/PurchaseOrders'));
+
 
 const Layout = () => {
   const location = useLocation();
-  const showTopBar = ['/', '/store', '/profile', '/evaluations', '/leaderboard'].includes(location.pathname);
+  const showTopBar = ['/', '/store', '/profile', '/evaluations'].includes(location.pathname);
   const mainContentMargin = 'md:mr-20';
-  const isSpecialPage = location.pathname === '/profile' || location.pathname === '/leaderboard';
+  const isSpecialPage = location.pathname === '/profile';
 
   const mainClasses = `${mainContentMargin} ${isSpecialPage ? 'mb-0' : 'p-4 mt-16 mb-16 md:mb-0'}`;
 
@@ -34,8 +39,6 @@ const Layout = () => {
   );
 };
 
-import { TopBarProvider } from './context/TopBarContext';
-
 const TopBarOnlyLayout = ({ backButtonLink }) => {
   return (
     <TopBarProvider>
@@ -49,41 +52,40 @@ const TopBarOnlyLayout = ({ backButtonLink }) => {
   );
 };
 
-import ScrollToTop from './components/ScrollToTop';
+const LoadingFallback = () => (
+  <div className="flex justify-center items-center min-h-screen">
+    <div className="spinner"></div>
+  </div>
+);
 
 const AppContent = () => {
   const { initialAuthChecked } = useAuth();
 
   if (!initialAuthChecked) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="spinner"></div>
-      </div>
-    );
+    return <LoadingFallback />;
   }
 
   return (
     <HashRouter>
       <ScrollToTop />
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Exams />} />
-          <Route path="evaluations" element={<Evaluations />} />
-          <Route path="store" element={<Store />} />
-          <Route path="profile" element={<Profile />} />
-          <Route path="leaderboard" element={<LeaderboardPage />} />
-        </Route>
-        <Route element={<TopBarOnlyLayout backButtonLink="/profile" />}>
-          <Route path="/purchase-orders" element={<PurchaseOrders />} />
-        </Route>
-        <Route path="exam/:examId" element={<ExamView />} />
-        <Route path="results/:examId" element={<ResultsPage />} />
-      </Routes>
+      <Suspense fallback={<LoadingFallback />}>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Exams />} />
+            <Route path="evaluations" element={<Evaluations />} />
+            <Route path="store" element={<Store />} />
+            <Route path="profile" element={<Profile />} />
+          </Route>
+          <Route element={<TopBarOnlyLayout backButtonLink="/profile" />}>
+            <Route path="/purchase-orders" element={<PurchaseOrders />} />
+          </Route>
+          <Route path="exam/:examId" element={<ExamView />} />
+          <Route path="results/:examId" element={<ResultsPage />} />
+        </Routes>
+      </Suspense>
     </HashRouter>
   );
 }
-
-import { Toaster } from 'react-hot-toast';
 
 function App() {
   return (

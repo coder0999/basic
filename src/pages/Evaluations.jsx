@@ -1,40 +1,40 @@
-import { useState, useEffect } from 'react';
+import React from 'react';
 import toast from 'react-hot-toast';
 import useSubjects from '../hooks/useSubjects';
-import useSupabaseFiles from '../hooks/useSupabaseFiles';
 
 const Evaluations = () => {
   const { subjects, loading: subjectsLoading } = useSubjects();
-  const { files: supabaseFiles, loading: filesLoading, error: filesError } = useSupabaseFiles();
-
-  const [allEvaluations, setAllEvaluations] = useState([]);
-
-  useEffect(() => {
-    if (!subjectsLoading && !filesLoading) {
-      const combined = [
-        ...subjects.map(subject => ({ ...subject, type: 'subject' })),
-        ...supabaseFiles.map(file => ({ ...file, type: 'supabaseFile' })),
-      ];
-      setAllEvaluations(combined);
-    }
-  }, [subjects, supabaseFiles, subjectsLoading, filesLoading]);
 
   const handleDownloadClick = () => {
-    toast.success('تم التنزيل بنجاح');
+    toast.success('جاري التنزيل...', {
+      style: {
+        border: '1px solid #007bff',
+        padding: '16px',
+        color: '#007bff',
+        background: '#fff',
+      },
+      iconTheme: {
+        primary: '#007bff',
+        secondary: '#fff',
+      },
+    });
   };
 
-  if (subjectsLoading || filesLoading) {
+  const SkeletonCard = () => (
+    <div className="bg-white rounded-xl shadow-md p-6 flex flex-col items-center justify-center space-y-4">
+      <div className="skeleton-line w-3/4 h-6 mx-auto"></div>
+      <div className="skeleton-line w-28 h-10 rounded-lg mt-2"></div>
+    </div>
+  );
+
+  if (subjectsLoading) {
     return (
       <div className="container mx-auto p-4 flex-grow">
-        <div className="spinner"></div>
-      </div>
-    );
-  }
-
-  if (filesError) {
-    return (
-      <div className="container mx-auto p-4 flex-grow text-red-600">
-        <p>Error loading files from Supabase: {filesError.message}</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <SkeletonCard />
+          <SkeletonCard />
+          <SkeletonCard />
+        </div>
       </div>
     );
   }
@@ -43,10 +43,10 @@ const Evaluations = () => {
     <div className="container mx-auto p-4 flex-grow">
       
       <div id="subjects-container" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {allEvaluations.length === 0 ? (
+        {subjects.length === 0 ? (
           <p className="col-span-full text-center text-gray-600">لا توجد مواد متاحة.</p>
         ) : (
-          allEvaluations.map((item, index) => (
+          subjects.map((item, index) => (
             <a 
               key={index} 
               href={item.link || '#'} 

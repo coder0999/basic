@@ -67,10 +67,21 @@ const Store = () => {
   
   const loading = pointsLoading || productsLoading;
 
+  const SkeletonCard = () => (
+    <div className="bg-white rounded-lg shadow-md p-4">
+      <div className="skeleton-line w-3/4 h-6 mb-4"></div>
+      <div className="skeleton-line w-1/2 h-5"></div>
+    </div>
+  );
+
   if (loading) {
     return (
-      <div className="container mx-auto p-4 flex-grow flex justify-center items-center">
-        <div className="spinner"></div>
+      <div className="container mx-auto p-4 flex-grow">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
+          <SkeletonCard />
+          <SkeletonCard />
+          <SkeletonCard />
+        </div>
       </div>
     );
   }
