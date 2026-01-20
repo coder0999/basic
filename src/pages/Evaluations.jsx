@@ -20,24 +20,9 @@ const Evaluations = () => {
     });
   };
 
-  const SkeletonCard = () => (
-    <div className="bg-white rounded-xl shadow-md p-6 flex flex-col items-center justify-center space-y-4">
-      <div className="skeleton-line w-3/4 h-6 mx-auto"></div>
-      <div className="skeleton-line w-28 h-10 rounded-lg mt-2"></div>
-    </div>
-  );
 
-  if (subjectsLoading) {
-    return (
-      <div className="container mx-auto p-4 flex-grow">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <SkeletonCard />
-          <SkeletonCard />
-          <SkeletonCard />
-        </div>
-      </div>
-    );
-  }
+
+
 
   return (
     <div className="container mx-auto p-4 flex-grow">

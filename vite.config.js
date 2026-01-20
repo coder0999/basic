@@ -2,9 +2,9 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
 // https://vitejs.dev/config/
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   plugins: [react()],
-  base: '/basic/',
+  base: command === 'build' ? '/basic/' : '/',
   define: {
     'process.env': {},
     'global': {},
@@ -14,4 +14,4 @@ export default defineConfig({
       'events': 'events',
     },
   },
-})
+}))

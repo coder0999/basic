@@ -16,6 +16,9 @@ const Profile = lazy(() => import('./pages/Profile'));
 const ExamView = lazy(() => import('./pages/ExamView'));
 const ResultsPage = lazy(() => import('./pages/ResultsPage'));
 const PurchaseOrders = lazy(() => import('./pages/PurchaseOrders'));
+const AboutUs = lazy(() => import('./pages/AboutUs'));
+const ContactUs = lazy(() => import('./pages/ContactUs'));
+const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
 
 
 const Layout = () => {
@@ -52,33 +55,37 @@ const TopBarOnlyLayout = ({ backButtonLink }) => {
   );
 };
 
-const LoadingFallback = () => (
-  <div className="flex justify-center items-center min-h-screen">
-    <div className="spinner"></div>
-  </div>
-);
+
 
 const AppContent = () => {
   const { initialAuthChecked } = useAuth();
 
   if (!initialAuthChecked) {
-    return <LoadingFallback />;
+    return null;
   }
 
   return (
     <HashRouter>
       <ScrollToTop />
-      <Suspense fallback={<LoadingFallback />}>
+      <Suspense>
         <Routes>
+          {/* Main Layout Routes */}
           <Route path="/" element={<Layout />}>
             <Route index element={<Exams />} />
             <Route path="evaluations" element={<Evaluations />} />
             <Route path="store" element={<Store />} />
             <Route path="profile" element={<Profile />} />
           </Route>
+
+          {/* TopBarOnlyLayout Routes */}
           <Route element={<TopBarOnlyLayout backButtonLink="/profile" />}>
-            <Route path="/purchase-orders" element={<PurchaseOrders />} />
+            <Route path="purchase-orders" element={<PurchaseOrders />} />
+            <Route path="about-us" element={<AboutUs />} />
+            <Route path="contact-us" element={<ContactUs />} />
+            <Route path="privacy-policy" element={<PrivacyPolicy />} />
           </Route>
+
+          {/* Standalone Routes */}
           <Route path="exam/:examId" element={<ExamView />} />
           <Route path="results/:examId" element={<ResultsPage />} />
         </Routes>

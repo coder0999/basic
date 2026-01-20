@@ -76,29 +76,10 @@ const PurchaseOrders = () => {
     return orders.filter(order => order.status === activeFilter);
   }, [orders, activeFilter]);
 
-  const SkeletonCard = () => (
-    <div className="bg-white border rounded-lg shadow-md p-4">
-      <div className="flex justify-between items-center mb-4">
-        <div className="skeleton-line w-1/2 h-6"></div>
-        <div className="skeleton-line w-20 h-6 rounded-full"></div>
-      </div>
-      <div className="skeleton-line w-1/4 h-5 mb-4"></div>
-      <div className="skeleton-line w-3/4 h-4"></div>
-      <div className="border-t mt-4 pt-4 space-y-2">
-        <div className="skeleton-line w-full h-4"></div>
-        <div className="skeleton-line w-1/2 h-4"></div>
-      </div>
-    </div>
-  );
+
 
   if (loading) {
-    return (
-      <div dir="rtl" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <SkeletonCard />
-        <SkeletonCard />
-        <SkeletonCard />
-      </div>
-    );
+    return null;
   }
 
   if (error) {

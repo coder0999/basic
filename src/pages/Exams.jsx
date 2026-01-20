@@ -24,14 +24,7 @@ const Exams = () => {
     return () => unsubscribe();
   }, []);
 
-  const SkeletonCard = () => (
-    <div className="skeleton-card">
-      <div className="space-y-3">
-        <div className="skeleton-line w-3/4 mx-auto"></div>
-        <div className="skeleton-line w-1/2 mx-auto"></div>
-      </div>
-    </div>
-  );
+
 
   const ExamCard = ({ exam }) => {
     const totalPoints = exam.questions.reduce((sum, q) => sum + (q.points || 1), 0);
@@ -51,11 +44,7 @@ const Exams = () => {
       
       <div id="exams-list" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {loading ? (
-          <>
-            <SkeletonCard />
-            <SkeletonCard />
-            <SkeletonCard />
-          </>
+          null
         ) : exams.length === 0 ? (
           <p className="col-span-full text-center text-gray-500">لا توجد امتحانات متاحة حالياً.</p>
         ) : (
