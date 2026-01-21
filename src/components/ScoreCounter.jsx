@@ -1,11 +1,21 @@
 import React from 'react';
 import useUserPoints from '../hooks/useUserPoints';
+import useAuth from '../hooks/useAuth'; // Import useAuth
 
 const ScoreCounter = () => {
+  const { user } = useAuth(); // Get user from auth context
   const { points, loading } = useUserPoints();
 
   if (loading) {
     return <div className="text-gray-800">...</div>;
+  }
+
+  if (!user) { // If no user, show grayed out message
+    return (
+      <div className="flex items-center bg-gray-400 text-white font-bold py-1 px-3 rounded-full shadow-md text-xs">
+        لن يتم احتساب النقاط الا عند تسجيل الدخول
+      </div>
+    );
   }
 
   return (

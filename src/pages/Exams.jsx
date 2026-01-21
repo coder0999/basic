@@ -1,35 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { collection, onSnapshot } from 'firebase/firestore';
-import { db } from '../firebase';
+import React from 'react';
 import { Link } from 'react-router-dom';
+import useExams from '../hooks/useExams';
 
 const Exams = () => {
-  const [exams, setExams] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const examsCollection = collection(db, 'exams');
-    const unsubscribe = onSnapshot(examsCollection, (snapshot) => {
-      const examsData = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      setExams(examsData);
-      setLoading(false);
-    }, (error) => {
-      console.error("Error fetching exams:", error);
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
-  }, []);
-
-
+  const { exams, loading } = useExams();
 
   const ExamCard = ({ exam }) => {
     const totalPoints = exam.questions.reduce((sum, q) => sum + (q.points || 1), 0);
     return (
-      <Link to={`/exam/${exam.id}`} className="bg-white p-6 md:p-8 rounded-xl shadow-lg cursor-pointer flex flex-col justify-between no-underline">
+      <Link to={`/exam/${exam.id}`} state={{ exam }} className="bg-white p-6 md:p-8 rounded-xl shadow-lg cursor-pointer flex flex-col justify-between no-underline">
         <div>
           <h3 className="text-xl md:text-2xl font-bold text-gray-800 text-center">{exam.name || `امتحان ${exam.id}`}</h3>
           <p className="text-center text-gray-500 mt-4 text-base md:text-lg">{exam.questions.length} أسئلة</p>

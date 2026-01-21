@@ -1,35 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../firebase';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 
 const ExamView = () => {
   const { examId } = useParams();
   const navigate = useNavigate();
-  const [exam, setExam] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [userAnswers, setUserAnswers] = useState([]);
-  const [timeLeft, setTimeLeft] = useState(0);
+  const location = useLocation();
+  
+  // Get the exam data passed from the Link component state
+  const { exam } = location.state || {};
+
+  // Initialize state directly from the passed exam object
+  const [userAnswers, setUserAnswers] = useState(() => exam ? new Array(exam.questions.length).fill(null) : []);
+  const [timeLeft, setTimeLeft] = useState(() => exam ? (exam.duration || 30) * 60 : 0);
   const [showWarning, setShowWarning] = useState(false);
-
-  useEffect(() => {
-    const fetchExam = async () => {
-      const examRef = doc(db, 'exams', examId);
-      const docSnap = await getDoc(examRef);
-
-      if (docSnap.exists()) {
-        const examData = { id: docSnap.id, ...docSnap.data() };
-        setExam(examData);
-        setUserAnswers(new Array(examData.questions.length).fill(null));
-        setTimeLeft((examData.duration || 30) * 60);
-      } else {
-        console.error("No such document!");
-      }
-      setLoading(false);
-    };
-
-    fetchExam();
-  }, [examId]);
 
   const proceedToSubmit = () => {
     navigate(`/results/${examId}`, { state: { userAnswers, exam } });
@@ -63,12 +46,8 @@ const ExamView = () => {
     }
   };
 
-  if (loading) {
-    return <div className="spinner"></div>;
-  }
-
   if (!exam) {
-    return <div>Exam not found</div>;
+    return <div>Exam not found. Please go back and try again.</div>;
   }
 
   const formatTime = (seconds) => {

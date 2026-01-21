@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
 import { auth, db } from '../firebase';
 import { doc, setDoc } from 'firebase/firestore';
@@ -7,6 +7,7 @@ import ProfileButton from '../components/ProfileButton';
 
 const Profile = () => {
   const { user } = useAuth();
+  const [copied, setCopied] = useState(false);
 
   const handleSignIn = () => {
     const provider = new GoogleAuthProvider();
@@ -33,9 +34,18 @@ const Profile = () => {
     }, 100);
   };
 
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000); // Reset after 2 seconds
+    }, (err) => {
+      console.error('Could not copy text: ', err);
+    });
+  };
+
   return (
     <div className="flex-grow bg-white">
-      <div style={{backgroundColor: 'rgb(46, 144, 244)', borderBottomLeftRadius: '20px', borderBottomRightRadius: '20px'}} className="pt-16 pb-12 sm:pt-20 sm:pb-14 md:pt-24 md:pb-16">
+      <div className="pt-16 pb-12 sm:pt-20 sm:pb-14 md:pt-24 md:pb-16 bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500 rounded-b-[20px]">
         <div className="px-4">
           <h1 className="text-xl sm:text-2xl font-bold text-gray-800 mb-8 text-right">بروفايل</h1>
           {user ? (
@@ -46,7 +56,20 @@ const Profile = () => {
                 </div>
                 <div>
                   <h2 className="text-lg sm:text-xl font-bold text-gray-900 text-right">{user.displayName}</h2>
-                  <p className="text-[10px] sm:text-xs text-gray-500 mt-1 break-all text-right">{user.uid} :ID</p>
+                  <div className="flex items-center justify-end mt-1">
+                    {copied ? (
+                      <span className="text-green-500 text-xs">تم النسخ!</span>
+                    ) : (
+                      <p className="text-[10px] sm:text-xs text-black break-all text-right flex items-center">
+                        <button onClick={() => copyToClipboard(user.uid)} className="mr-2 text-black hover:text-gray-700">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                          </svg>
+                        </button>
+                        {user.uid} :ID
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>

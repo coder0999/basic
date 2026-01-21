@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { collection, onSnapshot, doc, addDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
+import { collection, onSnapshot, doc, addDoc, serverTimestamp, updateDoc, query, orderBy } from 'firebase/firestore';
 import { db } from '../firebase';
 import useAuth from '../hooks/useAuth';
 import useUserPoints from '../hooks/useUserPoints';
@@ -15,7 +15,8 @@ const Store = () => {
 
   useEffect(() => {
     const productsRef = collection(db, "products");
-    const unsubscribe = onSnapshot(productsRef, (snapshot) => {
+    const q = query(productsRef, orderBy('createdAt', 'desc')); // Sort by createdAt in descending order
+    const unsubscribe = onSnapshot(q, (snapshot) => {
       const productsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setProducts(productsData);
       setProductsLoading(false);
@@ -90,17 +91,20 @@ const Store = () => {
 
     return (
     <div className="container mx-auto p-4 flex-grow">
+      {!user && ( // Display message if not logged in
+        <div className="bg-orange-100 border-l-4 border-orange-500 text-orange-700 p-4 mb-6" role="alert">
+          <p className="font-bold">ملاحظة:</p>
+          <p>لن تتمكن من الشراء الا عند تسجيل الدخول من صفحة البروفايل.</p>
+        </div>
+      )}
       
-      {/* Points Counter */}
-      
-
       {/* Products Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
         {products.map(product => (
           <div 
             key={product.id} 
             className={`bg-white rounded-lg shadow-md p-4 transition-transform 
-                        ${product.quantity <= 0 ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer hover:scale-105'}`}
+                        ${!user ? 'opacity-50 cursor-not-allowed pointer-events-none' : 'cursor-pointer hover:scale-105'}`} // Dim, disable cursor, and prevent clicks if not logged in
             onClick={() => handleProductClick(product)}
           >
             <h3 className="text-xl font-bold mb-2">{product.name}</h3>

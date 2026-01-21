@@ -79,11 +79,35 @@ const ResultsPage = () => {
   return (
     <div className="py-4 flex-grow">
       <h2 className="text-3xl md:text-4xl font-bold text-gray-800 text-center mb-6">نتائج الامتحان</h2>
+      {!user && ( // Display this message only if user is not logged in
+        <div className="bg-orange-100 border-l-4 border-orange-500 text-orange-700 p-4 mb-6" role="alert">
+          <p className="font-bold">ملاحظة:</p>
+          <p>لن يتم احتساب النقاط الا عند تسجيل الدخول من صفحة البروفايل.</p>
+        </div>
+      )}
       <div className="space-y-8">
-        <div className="p-6 bg-blue-100 text-blue-800 rounded-lg shadow-md text-center mb-8">
-          <p className="text-2xl md:text-3xl font-bold">لقد أجبت على {correctAnswersCount} من {totalQuestions} بشكل صحيح</p>
-          <p className="text-xl md:text-2xl mt-2">لقد حصلت على <span className="font-bold text-green-600">{earnedPoints}</span> نقطة</p>
-          <p className="text-4xl md:text-5xl font-bold mt-2">{percentage}%</p>
+        <div className="grid grid-cols-3 gap-4 text-center mb-8">
+          {/* Score Box */}
+          <div className="bg-white p-4 rounded-lg shadow-lg flex flex-col justify-center items-center border-t-4 border-indigo-500">
+            <h3 className="text-sm font-semibold text-gray-500 mb-2">النتيجة</h3>
+            <div className="flex flex-col items-center justify-center text-3xl font-bold text-indigo-600">
+              <span>{correctAnswersCount}</span>
+              <hr className="w-8 border-t-2 border-indigo-400 my-0.5" />
+              <span>{totalQuestions}</span>
+            </div>
+          </div>
+
+          {/* Percentage Box */}
+          <div className="bg-white p-4 rounded-lg shadow-lg flex flex-col justify-center items-center border-t-4 border-green-500">
+            <h3 className="text-sm font-semibold text-gray-500 mb-2">النسبة المئوية</h3>
+            <p className="text-5xl font-bold text-green-600">{percentage}<span className="text-2xl">%</span></p>
+          </div>
+
+          {/* Points Box */}
+          <div className="bg-white p-4 rounded-lg shadow-lg flex flex-col justify-center items-center border-t-4 border-yellow-500">
+            <h3 className="text-sm font-semibold text-gray-500 mb-2">النقاط المكتسبة</h3>
+            <p className="text-5xl font-bold text-yellow-500">{earnedPoints}</p>
+          </div>
         </div>
         {exam.questions.map((question, index) => {
           const userAnswer = userAnswers[index];

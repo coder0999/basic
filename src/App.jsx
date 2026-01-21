@@ -67,7 +67,7 @@ const AppContent = () => {
   return (
     <HashRouter>
       <ScrollToTop />
-      <Suspense>
+      <Suspense fallback={<div className="flex justify-center items-center h-screen"><div>Loading...</div></div>}>
         <Routes>
           {/* Main Layout Routes */}
           <Route path="/" element={<Layout />}>
