@@ -1,41 +1,35 @@
 import { useState, useEffect } from 'react';
 import { db } from '../firebase';
-import { collection, query, where, onSnapshot } from 'firebase/firestore';
+import { collection, query, where, onSnapshot, orderBy } from 'firebase/firestore';
 
 const useUserOrders = (userId) => {
   const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     if (!userId) {
       setLoading(false);
+      setOrders([]);
       return;
     }
 
-    const timer = setTimeout(() => {
-      setLoading(true);
-    }, 500); // Only show loader if loading takes more than 500ms
-
     const ordersRef = collection(db, 'orders');
-    const q = query(ordersRef, where('userId', '==', userId));
+    const q = query(ordersRef, where('userId', '==', userId), orderBy('createdAt', 'desc'));
 
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      clearTimeout(timer); // Clear timer if data loads quickly
       const userOrders = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setOrders(userOrders);
       setLoading(false);
     }, (err) => {
-      clearTimeout(timer); // Also clear on error
+      console.error("Error fetching real-time orders:", err);
       setError(err);
       setLoading(false);
     });
 
-    // Cleanup subscription on unmount
-    return () => {
-      clearTimeout(timer);
-      unsubscribe();
-    };
+    // Cleanup the listener when the component unmounts or userId changes
+    return () => unsubscribe();
+
   }, [userId]);
 
   return { orders, loading, error };

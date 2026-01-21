@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { collection, onSnapshot, doc, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, onSnapshot, doc, addDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import useAuth from '../hooks/useAuth';
 import useUserPoints from '../hooks/useUserPoints';
@@ -28,6 +28,10 @@ const Store = () => {
   }, []);
 
   const handleProductClick = (product) => {
+    if (product.quantity <= 0) {
+      alert("نفدت الكمية من هذا المنتج.");
+      return;
+    }
     if (points < product.price) {
       alert("ليس لديك نقاط كافية");
     } else {
@@ -45,6 +49,7 @@ const Store = () => {
     if (!user || !selectedProduct) return;
 
     try {
+      // Create the order
       await addDoc(collection(db, "orders"), {
         userId: user.uid,
         userEmail: user.email,
@@ -56,9 +61,17 @@ const Store = () => {
         status: "pending",
         createdAt: serverTimestamp(),
       });
+
+      // Decrement product quantity (if it's not managed by an admin accept)
+      const productRef = doc(db, "products", selectedProduct.id);
+      await updateDoc(productRef, {
+        quantity: selectedProduct.quantity - 1
+      });
+
+
       alert("تم إرسال طلبك بنجاح!");
     } catch (error) {
-      console.error("Error creating order:", error);
+      console.error("Error creating order or updating quantity:", error);
       alert("حدث خطأ أثناء إرسال طلبك.");
     } finally {
       handleCloseModal();
@@ -67,10 +80,12 @@ const Store = () => {
   
   const loading = pointsLoading || productsLoading;
 
-
-
   if (loading) {
-    return null;
+    return (
+      <div className="container mx-auto p-4 flex-grow flex justify-center items-center">
+        <div className="spinner"></div>
+      </div>
+    );
   }
 
     return (
@@ -84,11 +99,17 @@ const Store = () => {
         {products.map(product => (
           <div 
             key={product.id} 
-            className="bg-white rounded-lg shadow-md p-4 cursor-pointer transform hover:scale-105 transition-transform"
+            className={`bg-white rounded-lg shadow-md p-4 transition-transform 
+                        ${product.quantity <= 0 ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer hover:scale-105'}`}
             onClick={() => handleProductClick(product)}
           >
             <h3 className="text-xl font-bold mb-2">{product.name}</h3>
-            <p className="text-gray-700 text-lg">{product.price} نقطة</p>
+            <p className="text-gray-700 text-lg mb-2">{product.price} نقطة</p>
+            {product.quantity > 0 ? (
+              <p className="text-gray-500 text-sm">الكمية المتاحة: {product.quantity}</p>
+            ) : (
+              <p className="text-red-500 font-bold text-sm">نفدت الكمية</p>
+            )}
           </div>
         ))}
       </div>
