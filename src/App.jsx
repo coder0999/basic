@@ -7,9 +7,9 @@ import useAuth from './hooks/useAuth';
 import { TopBarProvider } from './context/TopBarContext';
 import ScrollToTop from './components/ScrollToTop';
 import { Toaster } from 'react-hot-toast';
+import Exams from './pages/Exams';
 
 // Lazy load page components
-const Exams = lazy(() => import('./pages/Exams'));
 const Evaluations = lazy(() => import('./pages/Evaluations'));
 const Store = lazy(() => import('./pages/Store'));
 const Profile = lazy(() => import('./pages/Profile'));
@@ -67,7 +67,7 @@ const AppContent = () => {
   return (
     <HashRouter>
       <ScrollToTop />
-      <Suspense fallback={<div className="flex justify-center items-center h-screen"><div>Loading...</div></div>}>
+      <Suspense fallback={null}>
         <Routes>
           {/* Main Layout Routes */}
           <Route path="/" element={<Layout />}>
